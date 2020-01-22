@@ -9,7 +9,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="API.h" />
     <ClInclude Include="EasyDIPAPI\API.h">
       <Filter>EasyDIPAPI</Filter>
     </ClInclude>
@@ -39,7 +38,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="API.cpp" />
     <ClCompile Include="EasyDIPAPI\API.cpp">
       <Filter>EasyDIPAPI</Filter>
     </ClCompile>

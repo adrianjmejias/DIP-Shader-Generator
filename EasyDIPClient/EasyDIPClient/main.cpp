@@ -8,6 +8,6 @@ std::unique_ptr<Application> app;
 int main(int, char**)
 {
 	app.reset(new Application());
-	app->MainLoop();
+	//app->MainLoop();
     return 0;
 }

@@ -7,17 +7,19 @@
 
 #include <glad/glad.h>
 
+namespace ED
+{
+	class Quad {
+		//static Quad* instance;
+		unsigned int VBO, VAO;
+	public:
+		Quad();
+		~Quad();
+		void Draw();
+		void Bind();
+		//static Quad* Instance();
+	};
+}
 
-class Quad {
-	static Quad* instance;
-	static unsigned int VBO, VAO;
-	Quad();
-	~Quad();
-public:
-	void Draw();
-	void Bind();
-	static Quad* Instance();
-};
 #endif // !__ED_QUAD__
-
 

@@ -89,7 +89,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="API.h" />
     <ClInclude Include="EasyDIPAPI\API.h" />
     <ClInclude Include="EasyDIPAPI\EDBaseConv.h" />
     <ClInclude Include="EasyDIPAPI\EDCompositeConv.h" />
@@ -101,7 +100,6 @@
     <ClInclude Include="EasyDIPAPI\shaders\Shader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="API.cpp" />
     <ClCompile Include="EasyDIPAPI\API.cpp">
       <ObjectFileName>$(IntDir)\API1.obj</ObjectFileName>
     </ClCompile>

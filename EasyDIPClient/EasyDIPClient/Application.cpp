@@ -66,10 +66,13 @@ Application::Application() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
+	ED::EDInit();
 
 	if (EDImage::TryLoad("../valve.png", img))
 	{
 		std::cout << "img loaded successfully\n";
+		std::unique_ptr<ED::RawData> negative{ ED::ApplyGreyHA(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()) };
+		EDImage::TrySave(negative.get(), std::string("grey.png"), img->GetWidth(), img->GetHeight(), img->GetNChannels());
 	}
 	else
 	{
@@ -201,16 +204,15 @@ void Application::MainLoop()
 void Application::Render()
 {
 
-	Quad *quad = Quad::Instance();
-	if (bwShader) {
-		bwShader->use();
-		glActiveTexture(0);
-		glBindTexture(GL_TEXTURE_2D, texId);
-		bwShader->setInt("tex", 0);
-		quad->Bind();
-		quad->Draw();
-
-	}
+	//Quad quad = Quad();
+	//if (bwShader) {
+	//	bwShader->use();
+	//	glActiveTexture(0);
+	//	glBindTexture(GL_TEXTURE_2D, texId);
+	//	bwShader->setInt("tex", 0);
+	//	quad.Bind();
+	//	quad.Draw();
+	//}
 }
 
 void Application::ImGui()
@@ -368,9 +370,8 @@ void Application::ImGui()
 		//bwShader = Shader::FromString(vert.c_str(), sobel.c_str());
 		//std::cout << "recompiled" << std::endl;
 
-		std::unique_ptr<RawData> negative{ EDNegativeHA(img->data, img->GetWidth(), img->GetHeight()) };
-		texId = GetTexture(negative.get(), img->GetWidth(), img->GetHeight());
-
+		std::unique_ptr<ED::RawData> negative{ ED::ApplyGreyHA(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()) };
+		EDImage::TrySave(negative.get(), std::string("grey.png"), img->GetWidth(), img->GetHeight(), img->GetNChannels());
 
 	}
 

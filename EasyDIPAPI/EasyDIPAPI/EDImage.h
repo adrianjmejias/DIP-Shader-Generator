@@ -5,6 +5,7 @@
 
 #include "EDpch.h"
 
+
 float clamp(const float u, const float d, const float v);
 #include <stb_image_write.h>
 #include <stb_image.h>
@@ -15,7 +16,7 @@ public:
 	static bool TryLoad(const std::string& path, EDImage*& img);
 
 	static bool TrySave(const EDImage& img, const std::string& fileName);
-	static bool TrySave(const RawData* data, const std::string fileName, int width, int height, int nChannels) {
+	static bool TrySave(const ED::RawData* data, const std::string fileName, int width, int height, int nChannels) {
 		return stbi_write_png(fileName.data(), width, height, nChannels, data, nChannels * width);
 	}
 

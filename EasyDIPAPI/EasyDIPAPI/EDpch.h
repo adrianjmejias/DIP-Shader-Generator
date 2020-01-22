@@ -16,28 +16,23 @@
 #include "Quad.h"
 #include "shaders/Shader.h"
 //Shader
-using RawData = unsigned char;
+
+namespace ED {
 
 
+	using RawData = unsigned char;
 
-std::unique_ptr<Shader> greyShader;
-std::unique_ptr<Shader> bwShader;
-std::unique_ptr<Shader> sobel;
-std::unique_ptr<Shader> roberts;
-std::unique_ptr<Shader> prewitt;
-std::unique_ptr<Shader> box;
-std::unique_ptr<Shader> median;
-std::unique_ptr<Shader> laplaceGauss;
+	
 
-std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, int width, int height, int pivotX, int pivotY);
-std::string BuildConvolution(std::vector<float> vals, const std::string& name);
-std::string ApplyGreyScale(const std::string& varName);
-std::string BuildGlobalShader(const std::string& op, const std::string& uniforms = {});
+	std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, int width, int height, int pivotX, int pivotY);
+	std::string BuildConvolution(std::vector<float> vals, const std::string& name);
+	std::string ApplyGreyScale(const std::string& varName);
+	std::string BuildGlobalShader(const std::string& op, const std::string& uniforms = {});
 
-unsigned int GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHeight);
+	unsigned int GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHeight);
 
-bool EDInit();
-
+	bool EDInit();
+}
 #endif // !__ED_PCH__
 
 

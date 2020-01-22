@@ -14,6 +14,7 @@
 #include <memory>
 #include <glad/glad.h> 
 #include <GLFW/glfw3.h>
+#include <EasyDIPAPI/API.h>
 
 #endif // !__ED_CLIENT_PCH__
 

@@ -1,9 +1,6 @@
 #include "EDClientpch.h"
 
 
-#include "EasyDIPAPI/EDImage.h"
-#include "EasyDIPAPI/EDConvolution.h"
-#include "EasyDIPAPI/EDCompositeConv.h"
 
 
 
@@ -17,10 +14,6 @@ class Application
 	GLFWwindow *window;
 
 	EDImage *img;
-	EDCompositeConv* composite;
-	EDConvolution* bw, grey;
-	
-
 
 	unsigned int texId = 0;
 	unsigned int texOGImg = 0;
