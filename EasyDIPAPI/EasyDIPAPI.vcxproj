@@ -89,21 +89,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="API.h" />
+    <ClInclude Include="EasyDIPAPI\API.h" />
     <ClInclude Include="EasyDIPAPI\EDBaseConv.h" />
     <ClInclude Include="EasyDIPAPI\EDCompositeConv.h" />
     <ClInclude Include="EasyDIPAPI\EDConvolution.h" />
     <ClInclude Include="EasyDIPAPI\EDImage.h" />
     <ClInclude Include="EasyDIPAPI\EDpch.h" />
     <ClInclude Include="EasyDIPAPI\Quad.h" />
+    <ClInclude Include="EasyDIPAPI\ShaderPreprocessor.h" />
     <ClInclude Include="EasyDIPAPI\shaders\Shader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="API.cpp" />
+    <ClCompile Include="EasyDIPAPI\API.cpp">
+      <ObjectFileName>$(IntDir)\API1.obj</ObjectFileName>
+    </ClCompile>
     <ClCompile Include="EasyDIPAPI\EDBaseConv.cpp" />
     <ClCompile Include="EasyDIPAPI\EDCompositeConv.cpp" />
     <ClCompile Include="EasyDIPAPI\EDConvolution.cpp" />
     <ClCompile Include="EasyDIPAPI\EDImage.cpp" />
     <ClCompile Include="EasyDIPAPI\EDpch.cpp" />
     <ClCompile Include="EasyDIPAPI\Quad.cpp" />
+    <ClCompile Include="EasyDIPAPI\ShaderPreprocessor.cpp" />
     <ClCompile Include="EasyDIPAPI\shaders\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>

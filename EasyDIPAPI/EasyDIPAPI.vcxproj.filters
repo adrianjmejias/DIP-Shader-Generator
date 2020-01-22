@@ -1,30 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="shaders">
-      <UniqueIdentifier>{0F45D591-7B24-542D-843C-DF03F09ABA8E}</UniqueIdentifier>
+    <Filter Include="EasyDIPAPI">
+      <UniqueIdentifier>{CEEB7B97-BAA3-BDE4-23AB-96400F8258D5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EasyDIPAPI\shaders">
+      <UniqueIdentifier>{C79685C8-B37A-461E-1CDB-407108DE30A0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EasyDIPAPI\EDBaseConv.h" />
-    <ClInclude Include="EasyDIPAPI\EDCompositeConv.h" />
-    <ClInclude Include="EasyDIPAPI\EDConvolution.h" />
-    <ClInclude Include="EasyDIPAPI\EDImage.h" />
-    <ClInclude Include="EasyDIPAPI\EDpch.h" />
-    <ClInclude Include="EasyDIPAPI\Quad.h" />
+    <ClInclude Include="API.h" />
+    <ClInclude Include="EasyDIPAPI\API.h">
+      <Filter>EasyDIPAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\EDBaseConv.h">
+      <Filter>EasyDIPAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\EDCompositeConv.h">
+      <Filter>EasyDIPAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\EDConvolution.h">
+      <Filter>EasyDIPAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\EDImage.h">
+      <Filter>EasyDIPAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\EDpch.h">
+      <Filter>EasyDIPAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Quad.h">
+      <Filter>EasyDIPAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\ShaderPreprocessor.h">
+      <Filter>EasyDIPAPI</Filter>
+    </ClInclude>
     <ClInclude Include="EasyDIPAPI\shaders\Shader.h">
-      <Filter>shaders</Filter>
+      <Filter>EasyDIPAPI\shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EasyDIPAPI\EDBaseConv.cpp" />
-    <ClCompile Include="EasyDIPAPI\EDCompositeConv.cpp" />
-    <ClCompile Include="EasyDIPAPI\EDConvolution.cpp" />
-    <ClCompile Include="EasyDIPAPI\EDImage.cpp" />
-    <ClCompile Include="EasyDIPAPI\EDpch.cpp" />
-    <ClCompile Include="EasyDIPAPI\Quad.cpp" />
+    <ClCompile Include="API.cpp" />
+    <ClCompile Include="EasyDIPAPI\API.cpp">
+      <Filter>EasyDIPAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\EDBaseConv.cpp">
+      <Filter>EasyDIPAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\EDCompositeConv.cpp">
+      <Filter>EasyDIPAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\EDConvolution.cpp">
+      <Filter>EasyDIPAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\EDImage.cpp">
+      <Filter>EasyDIPAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\EDpch.cpp">
+      <Filter>EasyDIPAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Quad.cpp">
+      <Filter>EasyDIPAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\ShaderPreprocessor.cpp">
+      <Filter>EasyDIPAPI</Filter>
+    </ClCompile>
     <ClCompile Include="EasyDIPAPI\shaders\Shader.cpp">
-      <Filter>shaders</Filter>
+      <Filter>EasyDIPAPI\shaders</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

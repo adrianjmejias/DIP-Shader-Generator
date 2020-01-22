@@ -6,7 +6,86 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
-Shader *bwShader = nullptr;
+std::string ApplyGreyScale(const std::string& varName) {
+
+	return "{float color_greyscale_ = dot("+ varName +", vec3(0.2125f, 0.7154f, 0.0721f));\n"
+		+ varName + "= vec3(color_greyscale_);\n}";
+}
+std::string ApplyNegative(const std::string& varName) {
+	return varName + " = 1- " + varName;
+}
+std::string BuildGlobalShader(const std::string& op, const std::string& uniforms)
+{
+
+	std::string init(
+		"#version 330 core\n"
+		"in vec2 fragPos;\n"
+		"uniform sampler2D tex;\n"
+		"out vec4 fragColor;\n"
+		+uniforms+
+
+		"void main(){\n"
+
+			"vec2 actPos =(fragPos.xy + 1)/2.f;\n"
+			"actPos.y = 1 - actPos.y;\n"
+			"fragColor = vec4(texture(tex,actPos).rgb,1);\n"
+			+op+
+		"}\n");
+
+
+	return init;
+}
+std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, int width, int height, int pivotX, int pivotY)
+{
+	std::string init(
+		"#version 330 core\n"
+		"in vec2 fragPos;\n"
+		"uniform sampler2D tex;\n"
+		"uniform float imgWidth;\n"
+		"uniform float imgHeight;\n"
+		"out vec4 fragColor;\n"
+		"void main(){\n"
+		"vec2 actPos =(fragPos.xy + 1)/2.f;\n"
+		"actPos.y = 1 - actPos.y;\n"
+		"vec2 d = vec2(1.f/imgWidth, 1.f/imgHeight);\n"
+		"vec2 uAcum = vec2(0);\n"
+		"int convI = 0;\n"
+		"int width = " + std::to_string(width) + ";\n"
+		"int height = " + std::to_string(height) + ";\n"
+		"vec2 pivotDisplacement = vec2("+ std::to_string(pivotX)+", "+ std::to_string(pivotY) + ") * d;\n"
+		"actPos -= pivotDisplacement; \n"
+		+ before +
+		"for(int yy = 0; yy < height; yy++, uAcum.y += d.y){\n"
+			"\tfor(int xx = 0; xx < width; xx++, uAcum.x += d.x, convI++){\n"
+				"vec2 nUv = actPos + uAcum;\n"
+				+ op +
+			"\t}\n"
+		"uAcum.x = 0;\n"
+		"}\n"
+		+ after+
+	"}\n");
+
+
+	return init;
+
+}
+std::string BuildConvolution(std::vector<float> vals, const std::string& name)
+{
+	std::string convolution = "float "+name+"[" + std::to_string(vals.size()) + "] = float[](";
+
+	std::for_each(begin(vals), end(vals), [&convolution](float a) {
+		convolution.append(std::to_string(a) + ",");
+	});
+
+	if (vals.size() > 0)
+	{
+		convolution.pop_back();
+	}
+	convolution.append(");\n");
+
+	return convolution;
+}
+
 
 unsigned int GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHeight)
 {
@@ -28,101 +107,6 @@ unsigned int GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHe
 	//return 0;
 }
 
-RawData* EDNegativeHA(RawData* data, unsigned int imgWidth, unsigned int imgHeight, RawData** outData, int nChannels)
-{
-
-	RawData* out = nullptr;
-
-	if (outData) // si el usuario quiere llenar un buffer que el maneje
-	{
-		if (*outData) // si el buffer ya tiene memoria asociada escribimos en el, asumimos que es el mismo tamaño de buffer que la imagen original
-		{
-			out = *outData;
-		}
-		else
-		{// sino reservamos memoria para ese buffer
-			out = new RawData[(imgWidth * imgHeight) * nChannels];
-			*outData = out;
-		}
-	}
-	else 
-	{
-		out = new RawData[(imgWidth * imgHeight) * nChannels];
-	}
-
-	
-
-	unsigned int tex = GetTexture(data, imgWidth, imgHeight);
-	Quad* q = Quad::Instance();
-	//glActiveTexture(tex):
-	bwShader->use();
-	glBindTexture(GL_TEXTURE_2D, tex);
-	bwShader->setInt("tex", 0);
-	bwShader->setInt("mode", 1);
-	bwShader->setFloat("imgWidth", imgWidth);
-	bwShader->setFloat("imgHeight", imgHeight);
-	q->Bind();
-	q->Draw();
-
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, out);
-	
-	glDeleteTextures(1, &tex);
-	return out;
-}
-
-RawData* EDGreyscaleHA(RawData* data, unsigned int imgWidth, unsigned int imgHeight, RawData** outData, int nChannels)
-{
-
-	RawData* out = nullptr;
-
-	if (outData) // si el usuario quiere llenar un buffer que el maneje
-	{
-		if (*outData) // si el buffer ya tiene memoria asociada escribimos en el, asumimos que es el mismo tamaño de buffer que la imagen original
-		{
-			out = *outData;
-		}
-		else
-		{// sino reservamos memoria para ese buffer
-			out = new RawData[(imgWidth * imgHeight) * nChannels];
-			*outData = out;
-		}
-	}
-	else
-	{
-		out = new RawData[(imgWidth * imgHeight) * nChannels];
-	}
 
 
 
-	unsigned int tex = GetTexture(data, imgWidth, imgHeight);
-	Quad* q = Quad::Instance();
-	//glActiveTexture(tex):
-	bwShader->use();
-	glBindTexture(GL_TEXTURE_2D, tex);
-	bwShader->setInt("tex", 0);
-	bwShader->setInt("mode", 1);
-	q->Bind();
-	q->Draw();
-
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, out);
-
-	glDeleteTextures(1, &tex);
-	return out;
-}
-
-
-
-
-
-
-bool EDInit()
-{
-
-
-
-
-
-
-	// ... <snip> ... more code
-	return true;
-}

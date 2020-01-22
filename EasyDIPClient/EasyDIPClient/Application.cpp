@@ -1,7 +1,7 @@
 #include "Application.h"
 
 
-extern Shader* bwShader;
+
 
 Application::Application() {
 
@@ -67,7 +67,7 @@ Application::Application() {
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
 
-	if (EDImage::TryLoad("../chikis.jpg", img))
+	if (EDImage::TryLoad("../valve.png", img))
 	{
 		std::cout << "img loaded successfully\n";
 	}
@@ -113,88 +113,25 @@ Application::Application() {
 	//{ 0,0,0,0 }, 5, 5, 2, 2) };
 
 
-	//std::unique_ptr<EDConvolution> sobelX{ EDConvolution::CreateCustom(
-	//{
-	//	1, 2, 1,
-	//	0, 0, 0,
-	//	-1, -2, 1,
-	//},
-	//{ 0,0,0,0 }, 3, 3, 1, 1) };
-
-	//std::unique_ptr<EDConvolution> sobelY{ EDConvolution::CreateCustom(
-	//{
-	//	-1 , 0, 1,
-	//	-2 , 0, 2,
-	//	-1 , 0, 1,
-	//},
-	//{ 0,0,0,0 }, 3, 3, 1, 1) };
-
-	//std::unique_ptr<EDConvolution> average{ EDConvolution::CreateCustom(
-	//EDConvolution::Normalize({
-	//	1,1,1,
-	//	1,1,1,
-	//	1,1,1,
-	//}),
-	//{ 0,0,0,0 }, 3, 3, 1, 1) };
-
-	//std::unique_ptr<EDConvolution> laplacian{ EDConvolution::CreateCustom(
-	//{
-	//	-1,-1,-1,
-	//	-1,8,-1,
-	//	-1,-1,-1,
-	//},
-	//{ 0,0,0,0 }, 3, 3, 1, 1) };
-
-
-	//composite->push_back(bw);
-	//composite->push_back(bw);
-	
+	std::unique_ptr<EDConvolution> sobelX{ EDConvolution::CreateCustom(
 	{
-		//std::unique_ptr<EDImage> bwImg{bw->ApplyConvolution(*img)};
-		//Save(bwImg.get(), "bw.png");
+		1, 2, 1,
+		0, 0, 0,
+		-1, -2, 1,
+	},
+	{ 0,0,0,0 }, 3, 3, 1, 1) };
 
-		//std::unique_ptr<EDImage> srcDest{ bw->ApplyConvolution(*img, img) };
-		//Save(srcDest.get(), "srcDest.png");
-
-
-		//std::unique_ptr<EDImage> compositeImg{ composite->ApplyConvolution(*img) };
-		//Save(compositeImg.get(), "composite.png");
-
-
-		//std::unique_ptr<EDImage> blurImg{ blur->ApplyConvolution(*img) };
-		//Save(blurImg.get(), "blurImg.png");
-
-		//std::unique_ptr<EDImage> blurPowerImg { blurPower->ApplyConvolution(*img) };
-		//Save(blurPowerImg.get(), "blurPowerImg.png");
-
-		//std::unique_ptr<EDImage> sobelXImg{ sobelX->ApplyConvolution(*img) };
-		//Save(sobelXImg.get(), "sobelXImg.png");
-
-
-		//std::unique_ptr<EDImage> sobelYImg{ sobelY->ApplyConvolution(*img) };
-		//Save(sobelYImg.get(), "sobelYImg.png");
-
-		//std::unique_ptr<EDImage> averageImg{ average->ApplyConvolution(*img) };
-		//Save(averageImg.get(), "averageImg.png");
-
-		//std::unique_ptr<EDImage> laplacianImg{ laplacian->ApplyConvolution(*img) };
-		//Save(laplacianImg.get(), "laplacianImg.png");
-		
-	/*
-
-		std::unique_ptr<EDImage> bwbwImage{ bw->ApplyConvolution(*bwImg) };
-
-		Save(bwbwImage.get(), "bwbw.png");
-
-	*/
+	std::unique_ptr<EDConvolution> sobelY{ EDConvolution::CreateCustom(
+	{
+		-1 , 0, 1,
+		-2 , 0, 2,
+		-1 , 0, 1,
+	},
+	{ 0,0,0,0 }, 3, 3, 1, 1) };
 
 
 
-		//std::unique_ptr<EDConvolution> copyPassConv{ EDConvolution::CreateCopyPass() };
-		//std::unique_ptr<EDImage> copyPass{ copyPassConv->ApplyConvolution(*img) };
 
-		//Save(copyPass.get(), "copyPass.png");
-}
 
 
 	// (optional) set browser properties
@@ -304,67 +241,6 @@ void Application::ImGui()
 	ImGui::SameLine(); HelpMarker("With the ImGuiColorEditFlags_NoInputs flag you can hide all the slider/text inputs.\nWith the ImGuiColorEditFlags_NoLabel flag you can pass a non-empty label which will only be used for the tooltip and picker popup.");
 
 
-	static std::vector<const char *> names = {
-		"0,0",
-		"1,0",
-		"2,0",
-		"3,0",
-		"4,0",
-		"5,0",
-		"6,0",
-		"0,1",
-		"1,1",
-		"2,1",
-		"3,1",
-		"4,1",
-		"5,1",
-		"6,1",
-		"0,2",
-		"1,2",
-		"2,2",
-		"3,2",
-		"4,2",
-		"5,2",
-		"6,2",
-		"0,3",
-		"1,3",
-		"2,3",
-		"3,3",
-		"4,3",
-		"5,3",
-		"6,3",
-		"0,4",
-		"1,4",
-		"2,4",
-		"3,4",
-		"4,4",
-		"5,4",
-		"6,4",
-		"0,5",
-		"1,5",
-		"2,5",
-		"3,5",
-		"4,5",
-		"5,5",
-		"6,5",
-		"0,6",
-		"1,6",
-		"2,6",
-		"3,6",
-		"4,6",
-		"5,6",
-		"6,6",
-	};
-
-	for (size_t yy = 0, nn = 0; yy < heightConv; yy++)
-	{
-		for (size_t xx = 0; xx < widthConv; xx++, nn++)
-		{
-			ImGui::ColorEdit4(names[nn], (float*)&color[yy][xx], ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel);
-			ImGui::SameLine();
-		}
-		ImGui::NewLine();
-	}
 
 	if (texOGImg)
 	{
@@ -373,80 +249,124 @@ void Application::ImGui()
 
 	if (ImGui::Button("recompile"))
 	{
-		delete bwShader;
-
-
+		
 
 		std::string vert = Shader::GetSrcFromFile("bw.vert");
 		//std::string frag = init + end;
-		std::string init("#version 330 core\n"
-			"in vec2 fragPos;\n"
-			"uniform sampler2D tex;\n"
-			"uniform int mode = 1;\n"
-			"uniform float imgWidth;\n"
-			"uniform float imgHeight;\n"
-			"out vec4 fragColor;\n"
 
-			"void main(){\n"
-			"vec2 actPos = (fragPos.xy+1)/2.f;\n"
-			"vec3 texColor = texture(tex, actPos).rgb;\n"
-			"vec2 d = vec2(1.f/imgWidth, 1.f/imgHeight);\n"
+		//std::unique_ptr<EDConvolution> boxFilter{ EDConvolution::CreateCustom(
+		//EDConvolution::Normalize({
+		//	1,1,1,
+		//	1,1,1,
+		//	1,1,1,
+		//}),
+		//{ 0,0,0,0 }, 3, 3, 1, 1) };
+		//	
+		//std::unique_ptr<EDConvolution> laplacian{ EDConvolution::CreateCustom(
+		//	{
+		//		-1,-1,-1,
+		//		-1,8,-1,
+		//		-1,-1,-1,
+		//	},
+		//	{ 0,0,0,0 }, 3, 3, 1, 1) };
 
-			"	\n"
-			"int mode = 2;\n"
-			"if(mode == 0){\n"
-			"texColor = 1.f - texColor;\n"
-			"}else if(mode == 1){\n"
-			"vec3 grey = vec3(0.2125f, 0.7154f, 0.0721f);\n"
-			"float g = dot(texColor, grey);\n"
-			"texColor = vec3(g);\n"
-			"}\n"
-			"else if (mode == 2){\n"
-			"vec3 avg = vec3(0);\n"
-			"\n"
-			"\n"
 
-			"vec2 uAcum = vec2(0);\n"
 
-			"int width = 3;\n"
-			"int height = 3;\n"
-			"		 \n"
-			"float conv[9] = float[](\n"
-			"0.1f, 0.1f, 0.1f,\n"
-			"0.1f, 0.1f, 0.1f,\n"
-			"0.1f, 0.1f, 0.1f\n"
-			");\n"
-			"\n"
+		////std::string laplacianConv = BuildShaderConv(
+		////	BuildConvolution(laplacian->data, "conv")+
+		////	"vec3 avg= vec3(0);\n",
+		////	"vec3 color = texture(tex, nUv).rgb;\n"
+		////	+ ApplyGreyScale("color") + 
+		////	"avg += color * conv[convI];\n",
+		////	"fragColor = avg;",
+		////	3, 3);
 
-			"//		float conv[9] = float[](\n"
-			"//			-1.f, 0, 1.f,\n"
-			"//			-1.f, 0, 1.f,\n"
-			"//			-1.f, 0, 1.f\n"
-			"//		);\n"
-			"\n"
-		);
-std::string end(
-		"int convI = 0;\n"
-		"for(int yy = 0; yy < height; yy++, uAcum.y += d.y){\n"
-			"for(int xx = 0; xx < width; xx++, uAcum.x += d.x, convI++){\n"
-				"vec2 nUv = actPos + uAcum;\n"
-				"avg+= texture(tex, nUv).rgb * conv[convI];\n"
-			"}\n"
-		"}\n"
 
-"//		avg = texture(tex, actPos ).rgb;\n"
-		"texColor = avg;\n"
-	"}\n"
-"\n"
-"\n"
-"\n"
+		//std::unique_ptr<EDConvolution> sobelX{ EDConvolution::CreateCustom(
+		//	{
+		//		1, 2, 1,
+		//		0, 0, 0,
+		//		-1, -2, -1,
+		//	},
+		//	{ 0,0,0,0 }, 3, 3, 1, 1) };
 
-	"fragColor = vec4(texColor,1);\n"
-			"}\n");
+		//std::unique_ptr<EDConvolution> sobelY{ EDConvolution::CreateCustom(
+		//	{
+		//		-1 , 0, 1,
+		//		-2 , 0, 2,
+		//		-1 , 0, 1,
+		//	},
+		//	{ 0,0,0,0 }, 3, 3, 1, 1) };
 
-		std::string frag = init + end;
-		bwShader = Shader::FromString(vert.c_str(), frag.c_str());
-		std::cout << "recompiled" << std::endl;
+		//std::string sobel = BuildShaderConv(
+		//	BuildConvolution(sobelY->data, "convY") +
+		//	BuildConvolution(sobelX->data, "convX") +
+		//	BuildConvolution({0,0,0,0,0,0,0,0,0,1}, "disp") +
+		//	"vec3 avgX = vec3(0);\n"
+		//	"vec3 avgY = vec3(0);\n"
+		//	,
+
+		//	"#define GRADIENT(a,b) sqrt(a*a + b*b)\n"
+		//	
+		//	"vec3 color = texture(tex, nUv).rgb;\n"
+		//	//+ ApplyGreyScale("color")+
+		//	"avgX +=  color * convX[convI];\n"
+		//	"avgY += color * convY[convI];\n"
+		//	,
+
+		//	"fragColor = vec4(GRADIENT(avgY, avgX),1);\n",
+		//	3, 3, 1, 1);
+
+		//std::string miniSobel = BuildShaderConv(
+		//	BuildConvolution({1,-1}, "conv") +
+		//	"vec3 avg  = vec3(0); \n",
+
+		//	"vec3 color = texture(tex, nUv).rgb;"
+		//	+ ApplyGreyScale("color") +
+		//	"avg +=  color * conv[convI];\n",
+
+		//	"fragColor = vec4(avg,1);",
+		//	2, 1);
+
+		//std::string box = BuildShaderConv(
+		//	BuildConvolution(boxFilter->data, "conv")+
+		//	"vec3 avg = vec3(0);\n",
+
+		//	"vec3 color = texture(tex, nUv).rgb;"
+		//	"avg +=  color * conv[convI];\n",
+
+		//	"fragColor = vec4(avg, 1);",
+		//	3, 3, 1, 1);
+
+		//std::string fragGreyscale = BuildGlobalShader(
+		//	ApplyGreyScale("fragColor.rgb")
+		//);
+		//std::string fragNegative = BuildGlobalShader(
+		//	"fragColor = 1 - fragColor;"
+		//);
+
+		//
+
+		////std::string sobel = BuildShaderConv(
+		////	"float convY[9] = float[](\n"
+		////	"-1.f, -1.f, -1.f,\n"
+		////	"0.f, 0.f, 0.f,\n"
+		////	"1.f, 1.f, 1.f\n"
+		////	");\n"
+		////	"float convX[9] = float[](\n"
+		////	"-1.f, 0.f, 1.f,\n"
+		////	"-1.f, 0.f, 1.f,\n"
+		////	"-1.f, 0.f, 1.f\n"
+		////	");\n"
+		////	"vec3 avgX = vec3(0);\n"
+		////	"vec3 avgY = vec3(0);\n",
+		////	"avgX += texture(tex, nUv).rgb * convX[convI];\n avgY += texture(tex, nUv).rgb * convY[convI];\n",
+		////	"avg = sqrt((avgX*avgX) + (avgY*avgY));",
+		////	3, 3);
+
+
+		//bwShader = Shader::FromString(vert.c_str(), sobel.c_str());
+		//std::cout << "recompiled" << std::endl;
 
 		std::unique_ptr<RawData> negative{ EDNegativeHA(img->data, img->GetWidth(), img->GetHeight()) };
 		texId = GetTexture(negative.get(), img->GetWidth(), img->GetHeight());
