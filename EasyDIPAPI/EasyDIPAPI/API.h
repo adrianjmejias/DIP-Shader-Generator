@@ -18,7 +18,7 @@ namespace ED {
 
 
 
-	//RawData* ApplyGrey(RawData*, unsigned int, unsigned int);
+	RawData* ApplyGrey(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
 	//RawData* ApplyBW(RawData*, unsigned int, unsigned int);
 	//RawData* ApplySobel(RawData*, unsigned int, unsigned int);
 	//RawData* ApplyRoberts(RawData*, unsigned int, unsigned int);

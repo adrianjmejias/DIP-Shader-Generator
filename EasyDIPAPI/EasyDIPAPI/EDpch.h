@@ -29,6 +29,7 @@ namespace ED {
 	std::string ApplyGreyScale(const std::string& varName);
 	std::string BuildGlobalShader(const std::string& op, const std::string& uniforms = {});
 
+	RawData* ForEachPixel(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, std::function<void(RawData*, RawData*)> op);
 	unsigned int GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHeight);
 
 	bool EDInit();

@@ -105,6 +105,62 @@ namespace ED
 		return tex;
 		//return 0;
 	}
+
+
+	RawData* ForEachPixel(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, std::function<void(RawData*, RawData*)> op)
+	{
+		RawData* out = new RawData[width * height * nChannels];
+		unsigned int end = width * height * nChannels;
+		for (unsigned int ii = 0; ii < end; ii += nChannels)
+		{
+			op(&out[ii], &data[ii]);
+		}
+		return out;
+	}
+
+	RawData* ForEachConvolution(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, int convWidth, int convHeight, int pivotX, int pivotY, std::function<void(RawData*, RawData*, int ix, int iy)> op, std::function<void(RawData*)> end)
+	{
+		RawData *out = new RawData[width * height * nChannels];
+		unsigned int byteWidth = width * nChannels;
+		int imHeight = height;
+
+		for (size_t yy = 0; yy < imHeight; yy += 1)
+		for (size_t xx = 0; xx < byteWidth; xx += nChannels)
+		{
+			float acum[4] = { 0,0,0,0 };
+			unsigned char acumDiscrete[4];
+
+			for (size_t cy = 0; cy < convHeight; cy++)
+			for (size_t cx = 0, cxc = 0; cx < convWidth; cx++, cxc += nChannels)
+			{
+				int fx = static_cast<int>(xx) + cxc - pivotX;
+				int fy = static_cast<int>(yy) + cy  - pivotY;
+
+
+				//unsigned char* color = data(fx, fy);
+
+				for (size_t cc = 0; cc < nChannels; cc++)
+				{
+					acum[cc] += color[cc] * data[cy * width + cx];
+				}
+			}
+
+
+
+			for (size_t cc = 0; cc < nChannels; cc++)
+			{
+				acumDiscrete[cc] = static_cast<unsigned char>(ED::clamp(255.f, 0.f, acum[cc]));
+			}
+			out[xx + yy * byteWidth](xx, yy, acumDiscrete, nChannels);
+		}
+
+
+
+
+
+		return destiny;
+	}
+
 }
 
 

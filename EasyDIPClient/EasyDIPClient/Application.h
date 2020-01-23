@@ -14,7 +14,7 @@ class Application
 	GLFWwindow *window;
 
 	EDImage *img;
-
+	std::unique_ptr<Shader> basicShader;
 	unsigned int texId = 0;
 	unsigned int texOGImg = 0;
 

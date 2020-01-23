@@ -54,7 +54,7 @@ namespace ED {
 		out = new RawData[(width * height) * nChannels];
 
 		s.use();
-		//glActiveTexture(GL_TEXTURE0);
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		s.setInt("tex", 0);
 		s.setFloat("imgWidth", width);
@@ -70,7 +70,22 @@ namespace ED {
 		return out;
 	}
 
-	//RawData* ApplyGrey(RawData* data, unsigned int width, unsigned int height) {}
+	RawData* ApplyGrey(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
+		return ForEachPixel(data, width, height, nChannels, [](RawData* dest, RawData* src) {
+			float c = src[0] * 0.2125f+ src[1] * 0.7154f+ src[2] * 0.0721f;
+			dest[0] = c;
+			dest[1] = c;
+			dest[2] = c;
+		});
+	}
+
+	RawData* ApplyNegative(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
+		return ForEachPixel(data, width, height, nChannels, [](RawData* dest, RawData* src) {
+			dest[0] = 1 - src[0];
+			dest[1] = 1 - src[1];
+			dest[2] = 1 - src[2];
+		});
+	}
 	//RawData* ApplyBW(RawData* data, unsigned int width, unsigned int height) {}
 	//RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height) {}
 	//RawData* ApplyRoberts(RawData* data, unsigned int width, unsigned int height) {}
@@ -87,7 +102,6 @@ namespace ED {
 
 		std::string fragNegative = BuildGlobalShader(
 			//"fragColor = 1 - fragColor;"
-
 			"fragColor = vec4(1,0,0,1);"
 		);
 		greyShader.reset(Shader::FromString(vert.c_str(), fragNegative.c_str()));
