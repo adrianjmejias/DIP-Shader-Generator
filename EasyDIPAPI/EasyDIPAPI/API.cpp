@@ -87,7 +87,19 @@ namespace ED {
 		});
 	}
 	//RawData* ApplyBW(RawData* data, unsigned int width, unsigned int height) {}
-	//RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height) {}
+	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels, int convWidth, int convHeight) {
+
+
+		return ForEachConvolution(data, width, height, nChannels, convWidth, convHeight, 1, 1, 
+			[](RawData* dest, int ix, int iy) {
+		
+				std::cout << ix << "," << iy << std::endl;
+			}, 
+			[](RawData* endPixel) {
+
+
+		},end);
+	}
 	//RawData* ApplyRoberts(RawData* data, unsigned int width, unsigned int height) {}
 	//RawData* ApplyPrewitt(RawData* data, unsigned int width, unsigned int height) {}
 	//RawData* ApplyBox(RawData* data, unsigned int width, unsigned int height) {}

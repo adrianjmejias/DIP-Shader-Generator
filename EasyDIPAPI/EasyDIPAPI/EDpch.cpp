@@ -118,7 +118,7 @@ namespace ED
 		return out;
 	}
 
-	RawData* ForEachConvolution(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, int convWidth, int convHeight, int pivotX, int pivotY, std::function<void(RawData*, RawData*, int ix, int iy)> op, std::function<void(RawData*)> end)
+	RawData* ForEachConvolution(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, int convWidth, int convHeight, int pivotX, int pivotY, std::function<void(RawData*, int ix, int iy)> op, std::function<void(RawData*)> end, std::function<void()> init)
 	{
 		RawData *out = new RawData[width * height * nChannels];
 		unsigned int byteWidth = width * nChannels;
@@ -127,38 +127,38 @@ namespace ED
 		for (size_t yy = 0; yy < imHeight; yy += 1)
 		for (size_t xx = 0; xx < byteWidth; xx += nChannels)
 		{
-			float acum[4] = { 0,0,0,0 };
-			unsigned char acumDiscrete[4];
-
+			//float acum[4] = { 0,0,0,0 };
+			//unsigned char acumDiscrete[4];
+			init();
 			for (size_t cy = 0; cy < convHeight; cy++)
 			for (size_t cx = 0, cxc = 0; cx < convWidth; cx++, cxc += nChannels)
 			{
 				int fx = static_cast<int>(xx) + cxc - pivotX;
 				int fy = static_cast<int>(yy) + cy  - pivotY;
 
-
+				op(data, fx, fy);
 				//unsigned char* color = data(fx, fy);
 
-				for (size_t cc = 0; cc < nChannels; cc++)
+	/*			for (size_t cc = 0; cc < nChannels; cc++)
 				{
 					acum[cc] += color[cc] * data[cy * width + cx];
-				}
+				}*/
 			}
 
+			end(&out[xx + yy * width]);
 
-
-			for (size_t cc = 0; cc < nChannels; cc++)
-			{
-				acumDiscrete[cc] = static_cast<unsigned char>(ED::clamp(255.f, 0.f, acum[cc]));
-			}
-			out[xx + yy * byteWidth](xx, yy, acumDiscrete, nChannels);
+			//for (size_t cc = 0; cc < nChannels; cc++)
+			//{
+			//	acumDiscrete[cc] = static_cast<unsigned char>(ED::clamp(255.f, 0.f, acum[cc]));
+			//}
+			//out[xx + yy * byteWidth](xx, yy, acumDiscrete, nChannels);
 		}
 
 
 
 
 
-		return destiny;
+		return out;
 	}
 
 }
