@@ -30,6 +30,23 @@ namespace ED {
 
 	//}
 
+	std::vector<float> Normalize(std::vector<float> d)
+	{
+		float sum = 0;
+
+		for (float val : d)
+		{
+			sum += val;
+		}
+
+		for (float& val : d)
+		{
+			val /= sum;
+		}
+
+		return d;
+	}
+
 	RawData* ApplyConvolutionHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, Shader& s, unsigned int *tex)
 	{
 		//PreApplyConvolution(tex);
@@ -87,19 +104,56 @@ namespace ED {
 		});
 	}
 	//RawData* ApplyBW(RawData* data, unsigned int width, unsigned int height) {}
+
 	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels, int convWidth, int convHeight) {
 
 
-		return ForEachConvolution(data, width, height, nChannels, convWidth, convHeight, 1, 1, 
-			[](RawData* dest, int ix, int iy) {
-		
-				std::cout << ix << "," << iy << std::endl;
-			}, 
-			[](RawData* endPixel) {
+		std::vector<float> box = Normalize({ 
+			1,4,7,4,1,
+			3,16,26,16,4,
+			7,26,41,26,7,
+			3,16,26,16,4,
+			1,4,7,4,1,
+		});
 
+		std::vector<float> sobelX = {
+			1, 2, 1,
+			0, 0, 0,
+			-1, -2, -1,
+		};
+		std::vector<float> sobelY = {
+			-1 , 0, 1,
+			-2 , 0, 2,
+			-1 , 0, 1,
+		};
 
-		},end);
+		float acum[4];
+		RawData col[4];
+		return ForEachConvolution(data, width, height, nChannels, 5, 5, 2, 2,
+			[&]() {
+				Assign<float>(acum, nChannels, 0.f);
+			},
+			[&](RawData* src, int ix, int iy, int ic) {
+				//std::cout << ix << "," << iy << std::endl;
+				
+				for (int ii = 0; ii < nChannels; ii++)
+				{
+					acum[ii] += src[ii] * box[ic];
+				}
+			},
+			[&](RawData* dest) {
+				for (int ii = 0; ii < nChannels; ii++)
+				{
+					dest[ii] = 25;//clamp(255, 0, acum[ii]);
+				}
+
+				//std::cout << "acum dest\n";
+				//for (int ii = 0; ii < nChannels; ii++)
+				//	std::cout << static_cast<float>(dest[ii]) << ", ";
+				//std::cout << std::endl;
+			});
 	}
+
 	//RawData* ApplyRoberts(RawData* data, unsigned int width, unsigned int height) {}
 	//RawData* ApplyPrewitt(RawData* data, unsigned int width, unsigned int height) {}
 	//RawData* ApplyBox(RawData* data, unsigned int width, unsigned int height) {}

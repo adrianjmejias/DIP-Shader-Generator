@@ -1,8 +1,10 @@
 #pragma once
-#include "EDConvolution.h"
-
+#include "EDpch.h"
+#include "EDImage.h"
 namespace ED {
 
+
+	std::vector<float> Normalize(std::vector<float> d);
 
 	RawData* ApplyConvolutionHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, Shader& s, unsigned int *tex = nullptr);
 	RawData* ApplyGreyHA(RawData*, unsigned int, unsigned int, unsigned int);
@@ -20,7 +22,7 @@ namespace ED {
 
 	RawData* ApplyGrey(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
 	//RawData* ApplyBW(RawData*, unsigned int, unsigned int);
-	RawData* ApplySobel(RawData*, unsigned int, unsigned int);
+	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels, int convWidth, int convHeight);
 	//RawData* ApplyRoberts(RawData*, unsigned int, unsigned int);
 	//RawData* ApplyPrewitt(RawData*, unsigned int, unsigned int);
 	//RawData* ApplyBox(RawData*, unsigned int, unsigned int);

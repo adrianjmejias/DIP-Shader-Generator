@@ -25,6 +25,7 @@ class Application
 	float color[7][7][4];
 	int pivotX = 0, pivotY = 0;
 	bool show_demo_window = true;
+
 public:
 	Application();
 	~Application();

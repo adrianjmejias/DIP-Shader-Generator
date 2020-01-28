@@ -118,46 +118,49 @@ namespace ED
 		return out;
 	}
 
-	RawData* ForEachConvolution(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, int convWidth, int convHeight, int pivotX, int pivotY, std::function<void(RawData*, int ix, int iy)> op, std::function<void(RawData*)> end, std::function<void()> init)
+	RawData* ForEachConvolution(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, int convWidth, int convHeight, int pivotX, int pivotY,std::function<void()> init, std::function<void(RawData*, int ix, int iy, int ic)> op, std::function<void(RawData*)> end)
 	{
-		RawData *out = new RawData[width * height * nChannels];
 		unsigned int byteWidth = width * nChannels;
 		int imHeight = height;
+		RawData *out = new RawData[ height * byteWidth ];
 
-		for (size_t yy = 0; yy < imHeight; yy += 1)
-		for (size_t xx = 0; xx < byteWidth; xx += nChannels)
-		{
-			//float acum[4] = { 0,0,0,0 };
-			//unsigned char acumDiscrete[4];
-			init();
-			for (size_t cy = 0; cy < convHeight; cy++)
-			for (size_t cx = 0, cxc = 0; cx < convWidth; cx++, cxc += nChannels)
+		int pXFinal = - pivotX * nChannels;
+		int pYFinal = - pivotY ;
+
+		for (size_t yy = 0, bcy = 0; 
+			yy < imHeight
+			
+			; yy += 1, bcy += byteWidth) {
+			for (size_t xx = 0; xx < byteWidth; xx += nChannels)
 			{
-				int fx = static_cast<int>(xx) + cxc - pivotX;
-				int fy = static_cast<int>(yy) + cy  - pivotY;
-
-				op(data, fx, fy);
-				//unsigned char* color = data(fx, fy);
-
-	/*			for (size_t cc = 0; cc < nChannels; cc++)
+				init();
 				{
-					acum[cc] += color[cc] * data[cy * width + cx];
-				}*/
+					for (size_t cy = 0, cdx = 0; cy < convHeight; cy++, cdx += convWidth) {
+						int ccy = static_cast<int>(yy) + pYFinal;
+						//if (ccy < 0) continue;
+
+						for (size_t cx = 0, cxc = 0; cx < convWidth; cx++, cxc += nChannels)
+						{
+							int fx = static_cast<int>(xx) + cxc + pXFinal;
+							//if (fx < 0) continue;
+							int fy = ccy + cy;
+
+							op(&data[xx + bcy], fx, fy, cdx + cx);
+						}
+					}
+
+				}
+				end(&out[xx + bcy]);
+
+				//for (int ii = 0; ii < nChannels; ii++)
+				//{
+				//	std::cout << static_cast<float>(data[xx + bcy + ii]) << ", ";
+				//	std::cout << static_cast<float>(out[xx + bcy + ii]) << ", ";
+				//	std::cout << std::endl;
+				//}
+
 			}
-
-			end(&out[xx + yy * width]);
-
-			//for (size_t cc = 0; cc < nChannels; cc++)
-			//{
-			//	acumDiscrete[cc] = static_cast<unsigned char>(ED::clamp(255.f, 0.f, acum[cc]));
-			//}
-			//out[xx + yy * byteWidth](xx, yy, acumDiscrete, nChannels);
 		}
-
-
-
-
-
 		return out;
 	}
 

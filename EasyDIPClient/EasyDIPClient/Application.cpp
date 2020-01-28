@@ -31,7 +31,7 @@ Application::Application() {
 #endif
 
 	// Create window with graphics context
-	 window = glfwCreateWindow(800, 600, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+	 window = glfwCreateWindow(640, 480, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
 	 if (window == NULL) {
 		__debugbreak();
 		return;
@@ -85,54 +85,12 @@ Application::Application() {
 	if (EDImage::TryLoad("../valve.png", img))
 	{
 		std::cout << "img loaded successfully\n";
-		
 	}
 	else
 	{
 		std::cout << "img load fail\n";
 		return;
 	}
-
-	//std::string pathNegative = "negative.png";
-	//EDImage::TrySave(negative.get(), pathNegative, img->GetWidth(), img->GetHeight(), img->GetNChannels());
-	//
-	/*NegativeHA(img->data, imgWidth, imgHeight, nChannels, strideX, strideY, conv, convWidth, convHeight);*/
-
-	//{
-	//	std::unique_ptr<EDBaseConvolution> mv10{ EDConvolution::CreateCustom({ 0,0,0,0,0,0,0,0,0,1 }, 10, 1, 9, 0) };
-	//	std::unique_ptr<EDImage> mvImg{ mv10->ApplyConvolution(*img) };
-	//	Save(mvImg.get(), "mv.png");
-	//}
-
-
-
-
-	//bw = EDConvolution::CreateNegative();
-	//composite = EDCompositeConv::Create();
-
-	//std::unique_ptr<EDConvolution> blur{ EDConvolution::CreateCustom(
-	//	EDConvolution::Normalize({
-	//		1,2,1,
-	//		2,3,2,
-	//		1,2,1
-	//	}),
-	//	{ 0,0,0,0 }, 3, 3, 1, 1) };
-
-	//std::unique_ptr<EDConvolution> blurPower{ EDConvolution::CreateCustom(
-	//EDConvolution::Normalize({
-	//	1,2,3,2,1,
-	//	2,4,6,4,2,
-	//	3,6,8,6,3,
-	//	2,4,6,4,2,
-	//	1,2,3,2,1
-	//}),
-	//{ 0,0,0,0 }, 5, 5, 2, 2) };
-
-
-	// (optional) set browser properties
-	//fileDialog.SetTitle("title");
-	//fileDialog.SetTypeFilters({ ".jpg", ".png", ".jpeg" });
-
 }
 
 Application::~Application() {
@@ -270,7 +228,8 @@ void Application::ImGui()
 		//	3, 3, 1, 1);
 
 
-		std::unique_ptr<ED::RawData> negative{ ED::ApplyGrey(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()) };
+		//std::unique_ptr<ED::RawData> negative{ ED::ApplySobel(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels(), 1, 1) };
+		std::unique_ptr<ED::RawData> negative{ ED::ApplySobel(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels(),1,1) };
 		texId = ED::GetTexture(negative.get(), img->GetWidth(), img->GetHeight());
 
 
