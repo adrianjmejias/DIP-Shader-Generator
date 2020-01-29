@@ -199,43 +199,8 @@ void Application::ImGui()
 
 	if (ImGui::Button("recompile"))
 	{
-		
-
-		std::string vert = Shader::GetSrcFromFile("bw.vert");
-		//std::string frag = init + end;
-
-
-
-
-
-		//std::string sobel = BuildShaderConv(
-		//	BuildConvolution(sobelY->data, "convY") +
-		//	BuildConvolution(sobelX->data, "convX") +
-		//	BuildConvolution({0,0,0,0,0,0,0,0,0,1}, "disp") +
-		//	"vec3 avgX = vec3(0);\n"
-		//	"vec3 avgY = vec3(0);\n"
-		//	,
-
-		//	"#define GRADIENT(a,b) sqrt(a*a + b*b)\n"
-		//	
-		//	"vec3 color = texture(tex, nUv).rgb;\n"
-		//	//+ ApplyGreyScale("color")+
-		//	"avgX +=  color * convX[convI];\n"
-		//	"avgY += color * convY[convI];\n"
-		//	,
-
-		//	"fragColor = vec4(GRADIENT(avgY, avgX),1);\n",
-		//	3, 3, 1, 1);
-
-
-		//std::unique_ptr<ED::RawData> negative{ ED::ApplySobel(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels(), 1, 1) };
-		std::unique_ptr<ED::RawData> negative{ ED::ApplySobel(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels(),1,1) };
+		std::unique_ptr<ED::RawData> negative{ ED::ApplyGreyHA(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()) };
 		texId = ED::GetTexture(negative.get(), img->GetWidth(), img->GetHeight());
-
-
-
-		//EDImage::TrySave(negative.get(), std::string("grey.png"), img->GetWidth(), img->GetHeight(), img->GetNChannels());
-	
 	}
 
 	//if (ImGui::Button("Save Image"))

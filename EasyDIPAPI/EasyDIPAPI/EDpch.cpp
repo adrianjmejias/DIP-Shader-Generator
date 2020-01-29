@@ -136,13 +136,13 @@ namespace ED
 				init();
 				{
 					for (size_t cy = 0, cdx = 0; cy < convHeight; cy++, cdx += convWidth) {
-						int ccy = static_cast<int>(yy) + pYFinal;
-						//if (ccy < 0) continue;
+						int ccy = static_cast<int>(yy) + pYFinal+cy;
+						if (ccy < 0) continue;
 
 						for (size_t cx = 0, cxc = 0; cx < convWidth; cx++, cxc += nChannels)
 						{
 							int fx = static_cast<int>(xx) + cxc + pXFinal;
-							//if (fx < 0) continue;
+							if (fx < 0) continue;
 							int fy = ccy + cy;
 
 							op(&data[xx + bcy], fx, fy, cdx + cx);
@@ -151,14 +151,6 @@ namespace ED
 
 				}
 				end(&out[xx + bcy]);
-
-				//for (int ii = 0; ii < nChannels; ii++)
-				//{
-				//	std::cout << static_cast<float>(data[xx + bcy + ii]) << ", ";
-				//	std::cout << static_cast<float>(out[xx + bcy + ii]) << ", ";
-				//	std::cout << std::endl;
-				//}
-
 			}
 		}
 		return out;

@@ -12,7 +12,7 @@
 #include <functional>
 #include <glad/glad.h>
 #include <filesystem>
-
+#include <cmath>
 #include "Quad.h"
 #include "shaders/Shader.h"
 //Shader

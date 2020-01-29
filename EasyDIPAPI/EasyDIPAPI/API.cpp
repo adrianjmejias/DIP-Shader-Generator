@@ -7,7 +7,7 @@ namespace ED {
 
 	std::unique_ptr<Shader> greyShader;
 	std::unique_ptr<Shader> bwShader;
-	std::unique_ptr<Shader> sobel;
+	std::unique_ptr<Shader> sobelShader;
 	std::unique_ptr<Shader> roberts;
 	std::unique_ptr<Shader> prewitt;
 	std::unique_ptr<Shader> box;
@@ -18,7 +18,10 @@ namespace ED {
 		return ApplyConvolutionHA(data, width, height, nChannels, *greyShader);
 	}
 	//RawData* ApplyBWHA(RawData* data, unsigned int width, unsigned int height) {}
-	//RawData* ApplySobelHA(RawData* data, unsigned int width, unsigned int height) {}
+	RawData* ApplySobelHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
+		return ApplyConvolutionHA(data, width, height, nChannels, *sobelShader);
+	}
+
 	//RawData* ApplyRobertsHA(RawData* data, unsigned int width, unsigned int height) {}
 	//RawData* ApplyPrewittHA(RawData* data, unsigned int width, unsigned int height) {}
 	//RawData* ApplyBoxHA(RawData* data, unsigned int width, unsigned int height) {}
@@ -52,20 +55,20 @@ namespace ED {
 		//PreApplyConvolution(tex);
 		RawData* out;
 		unsigned int texture;
+		texture = GetTexture(data, width, height);
+		//if (tex == nullptr)
+		//{
+		//	texture = GetTexture(data, width, height);
+		//}
+		//else
+		//{
+		//	if (*tex == 0)
+		//	{
+		//		*tex = GetTexture(data, width, height);
+		//	}
 
-		if (tex == nullptr)
-		{
-			texture = GetTexture(data, width, height);
-		}
-		else
-		{
-			if (*tex == 0)
-			{
-				*tex = GetTexture(data, width, height);
-			}
-
-			texture = *tex;
-		}
+		//	texture = *tex;
+		//}
 		
 		// tratar de hacer que el user pase el out que quiera usar
 		out = new RawData[(width * height) * nChannels];
@@ -73,17 +76,17 @@ namespace ED {
 		s.use();
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
+
 		s.setInt("tex", 0);
 		s.setFloat("imgWidth", width);
 		s.setFloat("imgHeight", height);
-
 
 		quad->Bind();
 		quad->Draw();
 
 		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, out);
-
 		glDeleteTextures(1, &texture);
+
 		return out;
 	}
 
@@ -105,15 +108,13 @@ namespace ED {
 	}
 	//RawData* ApplyBW(RawData* data, unsigned int width, unsigned int height) {}
 
-	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels, int convWidth, int convHeight) {
-
-
-		std::vector<float> box = Normalize({ 
-			1,4,7,4,1,
-			3,16,26,16,4,
-			7,26,41,26,7,
-			3,16,26,16,4,
-			1,4,7,4,1,
+	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels) {
+		std::vector<float> box = ED::Normalize({ 
+			1, 4,7,4,1,
+			4, 16,26,16,4,
+			7, 26,41,26,7,
+			4, 16,26,16,4,
+			1, 4,7,4,1,
 		});
 
 		std::vector<float> sobelX = {
@@ -127,30 +128,26 @@ namespace ED {
 			-1 , 0, 1,
 		};
 
-		float acum[4];
+		float acumX[4];
+		float acumY[4];
 		RawData col[4];
-		return ForEachConvolution(data, width, height, nChannels, 5, 5, 2, 2,
+		return ForEachConvolution(data, width, height, nChannels, 3, 3, 1, 1,
 			[&]() {
-				Assign<float>(acum, nChannels, 0.f);
+				Assign<float>(acumX, nChannels, 0.f);
+				Assign<float>(acumY, nChannels, 0.f);
 			},
 			[&](RawData* src, int ix, int iy, int ic) {
-				//std::cout << ix << "," << iy << std::endl;
-				
 				for (int ii = 0; ii < nChannels; ii++)
 				{
-					acum[ii] += src[ii] * box[ic];
+					acumX[ii] += src[ii] * sobelX[ic];
+					acumY[ii] += src[ii] * sobelY[ic];
 				}
 			},
 			[&](RawData* dest) {
 				for (int ii = 0; ii < nChannels; ii++)
 				{
-					dest[ii] = 25;//clamp(255, 0, acum[ii]);
+					dest[ii] = clamp(255, 0, sqrt(acumX[ii]* acumX[ii] + acumY[ii] * acumY[ii]));
 				}
-
-				//std::cout << "acum dest\n";
-				//for (int ii = 0; ii < nChannels; ii++)
-				//	std::cout << static_cast<float>(dest[ii]) << ", ";
-				//std::cout << std::endl;
 			});
 	}
 
@@ -170,9 +167,41 @@ namespace ED {
 			//"fragColor = 1 - fragColor;"
 			"fragColor = vec4(1,0,0,1);"
 		);
-		greyShader.reset(Shader::FromString(vert.c_str(), fragNegative.c_str()));
-		return true;
 
+		std::vector<float> sobelX = {
+			1, 2, 1,
+			0, 0, 0,
+			-1, -2, -1,
+		};
+		std::vector<float> sobelY = {
+			-1 , 0, 1,
+			-2 , 0, 2,
+			-1 , 0, 1,
+		};
+
+		std::string sobel = BuildShaderConv(
+			BuildConvolution(sobelY, "convY") +
+			BuildConvolution(sobelX, "convX") +
+			//BuildConvolution({0,0,0,0,0,0,0,0,0,1}, "disp") +
+			"vec3 avgX = vec3(0);\n"
+			"vec3 avgY = vec3(0);\n"
+			,
+
+			"#define GRADIENT(a,b) sqrt(a*a + b*b)\n"
+			
+			"vec3 color = texture(tex, nUv).rgb;\n"
+			"avgX +=  color * convX[convI];\n"
+			"avgY += color * convY[convI];\n"
+			,
+
+			"fragColor = vec4(GRADIENT(avgY, avgX),1);\n",
+			3, 3, 1, 1);
+
+
+		greyShader.reset(Shader::FromString(vert.c_str(), fragNegative.c_str()));
+		sobelShader.reset(Shader::FromString(vert.c_str(), sobel.c_str()));
+
+		return true;
 
 		/*std::unique_ptr<EDConvolution> boxFilter{ EDConvolution::CreateCustom(
 			EDConvolution::Normalize({
@@ -200,53 +229,6 @@ namespace ED {
 		////	"avg += color * conv[convI];\n",
 		////	"fragColor = avg;",
 		////	3, 3);
-
-
-		//std::unique_ptr<EDConvolution> sobelX{ EDConvolution::CreateCustom(
-		//	{
-		//		1, 2, 1,
-		//		0, 0, 0,
-		//		-1, -2, -1,
-		//	},
-		//	{ 0,0,0,0 }, 3, 3, 1, 1) };
-
-		//std::unique_ptr<EDConvolution> sobelY{ EDConvolution::CreateCustom(
-		//	{
-		//		-1 , 0, 1,
-		//		-2 , 0, 2,
-		//		-1 , 0, 1,
-		//	},
-		//	{ 0,0,0,0 }, 3, 3, 1, 1) };
-
-		//std::string sobel = BuildShaderConv(
-		//	BuildConvolution(sobelY->data, "convY") +
-		//	BuildConvolution(sobelX->data, "convX") +
-		//	BuildConvolution({ 0,0,0,0,0,0,0,0,0,1 }, "disp") +
-		//	"vec3 avgX = vec3(0);\n"
-		//	"vec3 avgY = vec3(0);\n"
-		//	,
-
-		//	"#define GRADIENT(a,b) sqrt(a*a + b*b)\n"
-
-		//	"vec3 color = texture(tex, nUv).rgb;\n"
-		//	//+ ApplyGreyScale("color")+
-		//	"avgX +=  color * convX[convI];\n"
-		//	"avgY += color * convY[convI];\n"
-		//	,
-
-		//	"fragColor = vec4(GRADIENT(avgY, avgX),1);\n",
-		//	3, 3, 1, 1);
-
-		//std::string miniSobel = BuildShaderConv(
-		//	BuildConvolution({ 1,-1 }, "conv") +
-		//	"vec3 avg  = vec3(0); \n",
-
-		//	"vec3 color = texture(tex, nUv).rgb;"
-		//	+ ApplyGreyScale("color") +
-		//	"avg +=  color * conv[convI];\n",
-
-		//	"fragColor = vec4(avg,1);",
-		//	2, 1);
 
 		/*std::string box = BuildShaderConv(
 			BuildConvolution(boxFilter->data, "conv") +
@@ -287,18 +269,6 @@ namespace ED {
 
 		//std::unique_ptr<RawData*> negative{ EDNegativeHA(img->data, img->GetWidth(), img->GetHeight()) };
 		//texId = GetTexture(negative.get(), img->GetWidth(), img->GetHeight());
-
-
-
-		//bwShader;
-		//sobel;
-		//roberts;
-		//prewitt;
-		//box;
-		//median;
-		//laplaceGauss;
-
-		// ... <snip> ... more code
 	}
 
 }
