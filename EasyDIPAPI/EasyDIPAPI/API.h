@@ -18,16 +18,32 @@ namespace ED {
 
 
 
-
-
+	//-Cargar imagen.
+	//	- Mostrar información sobre la imagen : dimensiones, bits por pixel, cantidad única de colores and dpi
+	//	(Dots Per Inch).
+	//	- Obtener el número de colores únicos que componen la imagen.
+	//	- Obtener el histograma de la imagen
+/*	-Aplicar un kernel arbitrario a la imagen.Para ello debe haber una forma simple y práctica de asignar
+		los valores a cada posición del kernel.
+		- Se debe poder especificar el tamaño del kernel a utilizar para cada uno de los filtros.Cualquier
+		combinación de filas y / o columnas es válida partiendo desde un mínimo de 2x1(vertical) ó 1x2
+		(horizontal) hasta un máximo de 7x7.
+		- Debe agregar al menos un(1) efecto complejo opcional(e.g., Chromakey, Cuantización, Toon
+			Shading, Embossing o Repujado, Estereografía, Gamma Correction, High Dynamic Range HDR, entre
+			otros).
+		- Salvar imagen.
+		- Las funciones del API deben ser demostradas a través de una aplicación que incorpore escalamiento
+		y rotación libre de la imagen, así como acercamiento y alejamiento(Zoo*/m in / Zoom out).
+	RawData* ApplyNegative(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
 	RawData* ApplyGrey(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
-	//RawData* ApplyBW(RawData*, unsigned int, unsigned int);
+	RawData* ApplyBW(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
+
 	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels);
-	//RawData* ApplyRoberts(RawData*, unsigned int, unsigned int);
-	//RawData* ApplyPrewitt(RawData*, unsigned int, unsigned int);
-	//RawData* ApplyBox(RawData*, unsigned int, unsigned int);
-	//RawData* ApplyMedian(RawData*, unsigned int, unsigned int);
-	//RawData* ApplyLaplaceGauss(RawData*, unsigned int, unsigned int);
+	RawData* ApplyRoberts(RawData* data, unsigned int width, unsigned int height, int nChannels);
+	RawData* ApplyPrewitt(RawData* data, unsigned int width, unsigned int height, int nChannels);
+	RawData* ApplyBox(RawData* data, unsigned int width, unsigned int height, int nChannels);
+	RawData* ApplyMedian(RawData* data, unsigned int width, unsigned int height, int nChannels);
+	RawData* ApplyLaplaceGauss(RawData* data, unsigned int width, unsigned int height, int nChannels);
 
 	bool EDInit();
 }

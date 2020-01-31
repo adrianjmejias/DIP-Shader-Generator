@@ -129,7 +129,6 @@ namespace ED
 
 		for (size_t yy = 0, bcy = 0; 
 			yy < imHeight
-			
 			; yy += 1, bcy += byteWidth) {
 			for (size_t xx = 0; xx < byteWidth; xx += nChannels)
 			{
@@ -138,17 +137,15 @@ namespace ED
 					for (size_t cy = 0, cdx = 0; cy < convHeight; cy++, cdx += convWidth) {
 						int ccy = static_cast<int>(yy) + pYFinal+cy;
 						if (ccy < 0) continue;
-
+						
 						for (size_t cx = 0, cxc = 0; cx < convWidth; cx++, cxc += nChannels)
 						{
 							int fx = static_cast<int>(xx) + cxc + pXFinal;
 							if (fx < 0) continue;
 							int fy = ccy + cy;
-
-							op(&data[xx + bcy], fx, fy, cdx + cx);
+							op(&data[fx + fy * byteWidth], fx, fy, cdx + cx);
 						}
 					}
-
 				}
 				end(&out[xx + bcy]);
 			}

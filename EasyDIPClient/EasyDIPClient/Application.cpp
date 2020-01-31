@@ -133,8 +133,9 @@ void Application::MainLoop()
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-
+		ImGuiIO& io = ImGui::GetIO();
+		//CG::GetMouseClick(io.MouseClicked);
+		
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
 
@@ -199,7 +200,7 @@ void Application::ImGui()
 
 	if (ImGui::Button("recompile"))
 	{
-		std::unique_ptr<ED::RawData> negative{ ED::ApplyGreyHA(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()) };
+		std::unique_ptr<ED::RawData> negative{ ED::ApplyMedian(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()) };
 		texId = ED::GetTexture(negative.get(), img->GetWidth(), img->GetHeight());
 	}
 
