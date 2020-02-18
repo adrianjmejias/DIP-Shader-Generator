@@ -7,10 +7,48 @@
 #ifndef __ED_CLIENT_APPLICATION__
 #define __ED_CLIENT_APPLICATION__
 
+
+
+
+
 class Application
 {
 	//template <typename TT> using ptr = std::shared_ptr<TT>;
 	//ImGui::FileBrowser fileDialog;
+
+	bool useGPU = true;
+	ED::GlobalConv convsGlobal[3] = {
+		ED::ApplyNegative,
+		ED::ApplyGrey,
+		ED::ApplyBW,
+	};
+
+	ED::GlobalConv convsGlobalGPU[3] = {
+		ED::ApplyNegativeHA,
+		ED::ApplyGreyHA,
+		ED::ApplyBWHA,
+	};
+
+	ED::LocalConv convsLocal[6] = {
+		ED::ApplySobel,
+		ED::ApplyRoberts,
+		ED::ApplyPrewitt,
+
+		ED::ApplyBox,
+		ED::ApplyMedian,
+		ED::ApplyLaplaceGauss,
+	};
+
+	ED::LocalConv convsLocalGPU[6] = {
+		ED::ApplySobel,
+		ED::ApplyRoberts,
+		ED::ApplyPrewitt,
+
+		ED::ApplyBox,
+		ED::ApplyMedian,
+		ED::ApplyLaplaceGauss,
+	};
+
 	GLFWwindow *window;
 
 	EDImage *img;
@@ -35,7 +73,6 @@ public:
 	void ImGui();
 	
 	static void HelpMarker(const char* desc);
-
 };
 
 static void glfw_error_callback(int error, const char* description)

@@ -3,12 +3,19 @@
 #include "EDImage.h"
 namespace ED {
 
+	using GlobalConv = std::function<RawData*(RawData*, unsigned int, unsigned int, unsigned int)>;
+	using LocalConv  = std::function<RawData*(RawData*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)>;
+	
 
 	std::vector<float> Normalize(std::vector<float> d);
 
 	RawData* ApplyConvolutionHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, Shader& s, unsigned int *tex = nullptr);
+	
+	
 	RawData* ApplyGreyHA(RawData*, unsigned int, unsigned int, unsigned int);
-	//RawData* ApplyBWHA(RawData*, unsigned int, unsigned int);
+	RawData* ApplyNegativeHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
+	RawData* ApplyBWHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
+
 	RawData* ApplySobelHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
 	//RawData* ApplyRobertsHA(RawData*, unsigned int, unsigned int);
 	//RawData* ApplyPrewittHA(RawData*, unsigned int, unsigned int);
@@ -33,17 +40,31 @@ namespace ED {
 			otros).
 		- Salvar imagen.
 		- Las funciones del API deben ser demostradas a través de una aplicación que incorpore escalamiento
-		y rotación libre de la imagen, así como acercamiento y alejamiento(Zoo*/m in / Zoom out).
+		y rotación libre de la imagen, así como acercamiento y alejamiento(Zoom in / Zoom out).*/
+	
+	
+
 	RawData* ApplyNegative(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
 	RawData* ApplyGrey(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
 	RawData* ApplyBW(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
 
-	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels);
-	RawData* ApplyRoberts(RawData* data, unsigned int width, unsigned int height, int nChannels);
-	RawData* ApplyPrewitt(RawData* data, unsigned int width, unsigned int height, int nChannels);
-	RawData* ApplyBox(RawData* data, unsigned int width, unsigned int height, int nChannels);
-	RawData* ApplyMedian(RawData* data, unsigned int width, unsigned int height, int nChannels);
-	RawData* ApplyLaplaceGauss(RawData* data, unsigned int width, unsigned int height, int nChannels);
 
+	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
+
+	RawData* ApplyRoberts(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
+
+	RawData* ApplyPrewitt(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
+
+	RawData* ApplyBox(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
+
+	RawData* ApplyMedian(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
+
+	RawData* ApplyLaplaceGauss(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
 	bool EDInit();
 }

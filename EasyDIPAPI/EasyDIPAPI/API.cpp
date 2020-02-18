@@ -7,6 +7,9 @@ namespace ED {
 
 	std::unique_ptr<Shader> greyShader;
 	std::unique_ptr<Shader> bwShader;
+	std::unique_ptr<Shader> negativeShader;
+
+
 	std::unique_ptr<Shader> sobelShader;
 	std::unique_ptr<Shader> roberts;
 	std::unique_ptr<Shader> prewitt;
@@ -17,7 +20,12 @@ namespace ED {
 	RawData* ApplyGreyHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
 		return ApplyConvolutionHA(data, width, height, nChannels, *greyShader);
 	}
-	//RawData* ApplyBWHA(RawData* data, unsigned int width, unsigned int height) {}
+	RawData* ApplyBWHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
+		return ApplyConvolutionHA(data, width, height, nChannels, *bwShader);
+	}
+	RawData* ApplyNegativeHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
+		return ApplyConvolutionHA(data, width, height, nChannels, *negativeShader);
+	}
 	RawData* ApplySobelHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
 		return ApplyConvolutionHA(data, width, height, nChannels, *sobelShader);
 	}
@@ -52,24 +60,37 @@ namespace ED {
 
 	RawData* ApplyConvolutionHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, Shader& s, unsigned int *tex)
 	{
+		// The texture we're going to render to
+		GLint m_viewport[4];
+
+		glGetIntegerv(GL_VIEWPORT, m_viewport);
+
+		std::cout << "viewport" << std::endl;
+
+		for (int ii = 0; ii < 4; ii++)
+		{
+			std::cout << m_viewport[ii] << std::endl;
+		}
+
+		GLuint renderedTexture = GetTexture(nullptr, width, height);
+
+		GLuint FramebufferName = 0;
+		glGenFramebuffers(1, &FramebufferName);
+		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderedTexture, 0);
+		GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+			__debugbreak();
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+		glViewport(0, 0, width, height);
+		glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
 		//PreApplyConvolution(tex);
 		RawData* out;
 		unsigned int texture;
 		texture = GetTexture(data, width, height);
-		//if (tex == nullptr)
-		//{
-		//	texture = GetTexture(data, width, height);
-		//}
-		//else
-		//{
-		//	if (*tex == 0)
-		//	{
-		//		*tex = GetTexture(data, width, height);
-		//	}
 
-		//	texture = *tex;
-		//}
-		
 		// tratar de hacer que el user pase el out que quiera usar
 		out = new RawData[(width * height) * nChannels];
 
@@ -84,15 +105,23 @@ namespace ED {
 		quad->Bind();
 		quad->Draw();
 
+		glBindTexture(GL_TEXTURE_2D, renderedTexture);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, out);
 		glDeleteTextures(1, &texture);
+		glDeleteTextures(1, &renderedTexture);
 
+		glViewport(0, 0, m_viewport[3], m_viewport[4
+		]);
 		return out;
 	}
 
+
+
 	RawData* ApplyGrey(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
 		return ForEachPixel(data, width, height, nChannels, [](RawData* dest, RawData* src) {
-			float c = src[0] * 0.2125f+ src[1] * 0.7154f+ src[2] * 0.0721f;
+			float c = src[0] * 0.2125f + src[1] * 0.7154f + src[2] * 0.0721f;
 			dest[0] = c;
 			dest[1] = c;
 			dest[2] = c;
@@ -108,15 +137,17 @@ namespace ED {
 	RawData* ApplyBW(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
 		return ForEachPixel(data, width, height, nChannels, [](RawData* dest, RawData* src) {
 			float c = src[0] * 0.2125f + src[1] * 0.7154f + src[2] * 0.0721f;
-			c = (c > 0.6) ? 1: 0;
-			
+			c = (c > 0.6) ? 1 : 0;
+
 			dest[0] = c;
 			dest[1] = c;
 			dest[2] = c;
 		});
 	}
-	
-	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels) {
+
+	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY) {
+
 		std::vector<float> sobelX = {
 			1, 2, 1,
 			0, 0, 0,
@@ -132,33 +163,35 @@ namespace ED {
 		float acumY[4];
 		return ForEachConvolution(data, width, height, nChannels, 3, 3, 1, 1,
 			[&]() {
-				Assign<float>(acumX, nChannels, 0.f);
-				Assign<float>(acumY, nChannels, 0.f);
-			},
+			Assign<float>(acumX, nChannels, 0.f);
+			Assign<float>(acumY, nChannels, 0.f);
+		},
 			[&](RawData* src, int ix, int iy, int ic) {
-				for (int ii = 0; ii < nChannels; ii++)
-				{
-					acumX[ii] += src[ii] * sobelX[ic];
-					acumY[ii] += src[ii] * sobelY[ic];
-				}
-			},
+			for (int ii = 0; ii < nChannels; ii++)
+			{
+				acumX[ii] += src[ii] * sobelX[ic];
+				acumY[ii] += src[ii] * sobelY[ic];
+			}
+		},
 			[&](RawData* dest) {
-				for (int ii = 0; ii < nChannels; ii++)
-				{
-					float x = acumX[ii] * acumX[ii];
-					float y = acumY[ii] * acumY[ii];
-					dest[ii] = clamp(255, 0, sqrt(x + y));
-				}
-			});
+			for (int ii = 0; ii < nChannels; ii++)
+			{
+				float x = acumX[ii] * acumX[ii];
+				float y = acumY[ii] * acumY[ii];
+				dest[ii] = clamp(255, 0, sqrt(x + y));
+			}
+		});
 	}
-	RawData* ApplyRoberts(RawData* data, unsigned int width, unsigned int height, int nChannels){
+	RawData* ApplyRoberts(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY) {
+
 		std::vector<float> sobelX = {
 			1, 0,
 			0, -1,
 		};
 		std::vector<float> sobelY = {
-			 0,  1, 
-			-1,	 0, 
+			0,  1,
+			-1,	 0,
 		};
 
 		float acumX[4];
@@ -184,9 +217,11 @@ namespace ED {
 			}
 		});
 
-	
+
 	}
-	RawData* ApplyPrewitt(RawData* data, unsigned int width, unsigned int height, int nChannels) {
+	RawData* ApplyPrewitt(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY) {
+
 		std::vector<float> sobelX = {
 			1,0,-1,
 			1,0,-1,
@@ -223,67 +258,73 @@ namespace ED {
 
 
 	}
-	RawData* ApplyBox(RawData* data, unsigned int width, unsigned int height, int nChannels) {
+	RawData* ApplyBox(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY) {
+
 		std::vector<float> box = Normalize({
 			1,1,1,
 			1,1,1,
 			1,1,1,
-		});
+			});
 
 		float acum[4];
 		return ForEachConvolution(data, width, height, nChannels, 2, 2, 0, 0,
 			[&]() {
-				Assign<float>(acum, nChannels, 0.f);
-			},
+			Assign<float>(acum, nChannels, 0.f);
+		},
 			[&](RawData* src, int ix, int iy, int ic) {
-				for (int ii = 0; ii < nChannels; ii++)
-				{
-					acum[ii] += src[ii] * box[ic];
-				}
-			},
+			for (int ii = 0; ii < nChannels; ii++)
+			{
+				acum[ii] += src[ii] * box[ic];
+			}
+		},
 			[&](RawData* dest) {
-				for (int ii = 0; ii < nChannels; ii++)
-				{
-					dest[ii] = clamp(255, 0, acum[ii]);
-				}
-			});
+			for (int ii = 0; ii < nChannels; ii++)
+			{
+				dest[ii] = clamp(255, 0, acum[ii]);
+			}
+		});
 	}
-	RawData* ApplyMedian(RawData* data, unsigned int width, unsigned int height, int nChannels) {
+	RawData* ApplyMedian(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY) {
+
 		float* md[4];
 		int sz = 7 * 7;
 		int actSz;
 
 		{
 			int bsz = sizeof(float) * sz;
-			md[0] = (float*) alloca(bsz);
-			md[1] = (float*) alloca(bsz);
-			md[2] = (float*) alloca(bsz);
-			md[3] = (float*) alloca(bsz);
+			md[0] = (float*)alloca(bsz);
+			md[1] = (float*)alloca(bsz);
+			md[2] = (float*)alloca(bsz);
+			md[3] = (float*)alloca(bsz);
 		}
 
 		return ForEachConvolution(data, width, height, nChannels, 7, 7, 3, 3,
 			[&]() {
-				actSz = 0;
-			},
+			actSz = 0;
+		},
 			[&](RawData* src, int ix, int iy, int ic) {
-				for (int ii = 0; ii < nChannels; ii++)
-				{
-					md[ii][ic] = src[ii];
-				}
-				actSz++;
-			},
-			[&](RawData* dest) {
-				for (int ii = 0; ii < nChannels; ii++)
-				{
-					std::sort(&md[ii][0], &md[ii][actSz]);
-					dest[ii] = clamp(255, 0, md[ii][actSz/2]);
-				}
+			for (int ii = 0; ii < nChannels; ii++)
+			{
+				md[ii][ic] = src[ii];
 			}
+			actSz++;
+		},
+			[&](RawData* dest) {
+			for (int ii = 0; ii < nChannels; ii++)
+			{
+				std::sort(&md[ii][0], &md[ii][actSz]);
+				dest[ii] = clamp(255, 0, md[ii][actSz / 2]);
+			}
+		}
 		);
-	
+
 	}
-	RawData* ApplyLaplaceGauss(RawData* data, unsigned int width, unsigned int height, int nChannels) {
-	
+	RawData* ApplyLaplaceGauss(RawData* data, unsigned int width, unsigned int height, int nChannels,
+		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY) {
+
+
 		std::vector<float> box = ED::Normalize({
 			0,-3,-7,-9,-7,-3,0,
 			-3,-16,-23,-18,-23,-16,-3,
@@ -292,44 +333,48 @@ namespace ED {
 			-7,-23,11,65,11,-23,-7,
 			-3,-16,-23,-18,-23,-16,-3,
 			0,-3,-7,-9,-7,-3,0
-		});
-			//1, 4,7,4,1,
-			//4, 16,26,16,4,
-			//7, 26,41,26,7,
-			//4, 16,26,16,4,
-			//1, 4,7,4,1,
+			});
 
 		float acum[4];
 		return ForEachConvolution(data, width, height, nChannels, 7, 7, 3, 3,
 			[&]() {
-				Assign<float>(acum, nChannels, 0.f);
-			},
+			Assign<float>(acum, nChannels, 0.f);
+		},
 			[&](RawData* src, int ix, int iy, int ic) {
-				for (int ii = 0; ii < nChannels; ii++)
-				{
-					acum[ii] += src[ii] * box[ic];
-				}
-			},
+			for (int ii = 0; ii < nChannels; ii++)
+			{
+				acum[ii] += src[ii] * box[ic];
+			}
+		},
 			[&](RawData* dest) {
-				for (int ii = 0; ii < nChannels; ii++)
-				{
-					dest[ii] = clamp(255, 0, acum[ii]);
-				}
+			for (int ii = 0; ii < nChannels; ii++)
+			{
+				dest[ii] = clamp(255, 0, acum[ii]);
+			}
 		});
 	}
 
-
-
-	
 	bool EDInit()
 	{
 		quad.reset(new Quad());
 		std::string vert = Shader::GetSrcFromFile("bw.vert");
 
 		std::string fragNegative = BuildGlobalShader(
-			//"fragColor = 1 - fragColor;"
-			"fragColor = vec4(1,0,0,1);"
+			"fragColor = 1 - fragColor;"
+			//"fragColor = vec4(1,0,0,1);"
 		);
+
+		std::string fragGreyscale = BuildGlobalShader(
+			//"fragColor = 1 - fragColor;"
+			ApplyGreyScale("fragColor.rgb")
+		);
+
+		std::string fragBW = BuildGlobalShader(
+			//"fragColor = 1 - fragColor;"
+			ApplyGreyScale("fragColor.rgb") +
+			"fragColor = ((fragColor.r > 150)? 1: 0);"
+		);
+	
 
 		std::vector<float> sobelX = {
 			1, 2, 1,
@@ -360,10 +405,11 @@ namespace ED {
 			"fragColor = vec4(GRADIENT(avgY, avgX),1);\n",
 			3, 3, 1, 1);
 
-
-		greyShader.reset(Shader::FromString(vert.c_str(), fragNegative.c_str()));
+		greyShader.reset(Shader::FromString(vert.c_str(), fragGreyscale.c_str()));
+		bwShader.reset(Shader::FromString(vert.c_str(), fragBW.c_str()));
+		negativeShader.reset(Shader::FromString(vert.c_str(), fragNegative.c_str()));
+		
 		sobelShader.reset(Shader::FromString(vert.c_str(), sobel.c_str()));
-
 		return true;
 
 		/*std::unique_ptr<EDConvolution> boxFilter{ EDConvolution::CreateCustom(

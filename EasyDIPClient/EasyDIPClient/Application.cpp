@@ -167,42 +167,89 @@ void Application::Render()
 void Application::ImGui()
 {
 	ImGui::Begin("Convolution Editor");
+	// (your selection data could be an index, a pointer to the object, an id for the object, a flag stored in the object itself, etc.)
+	const char* items[] = { 
+		"Negative", "Grey Scale","Black and White", 
+		"Sobel", "Roberts", "Prewitt",
+		"Box", "Median", "Laplacian of Gaussian",
+		"Custom"
+	};
 
-	if (ImGui::InputInt("Convolution Height", &heightConv))
+	static int idxConv = 0;
+	static const char* item_current = items[0]; // Here our selection is a single pointer stored outside the object.
+	
+	if (ImGui::BeginCombo("Convolution type", item_current, 0)) // The second parameter is the label previewed before opening the combo.
 	{
-		heightConv = clamp(7, 1, heightConv);
+		for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+		{
+			bool is_selected = (item_current == items[n]);
+			if (ImGui::Selectable(items[n], is_selected)) {
+				item_current = items[n];
+				idxConv = n;
+
+			}
+			if (is_selected)
+			{
+				ImGui::SetItemDefaultFocus();   // Set the initial focus when opening the combo (scrolling + for keyboard navigation support in the upcoming navigation branch)
+			}
+		}
+		ImGui::EndCombo();
 	}
 
-	if (ImGui::InputInt("Convolution Width", &widthConv))
+	bool IsGlobal = idxConv <= 2;
+	bool IsLocal = !IsGlobal && idxConv != 9;
+
+	if (!IsGlobal)
 	{
-		widthConv = clamp(7, 1, widthConv);
+		if (ImGui::InputInt("Convolution Height", &heightConv))
+		{
+			heightConv = clamp(7, 1, heightConv);
+		}
+
+		if (ImGui::InputInt("Convolution Width", &widthConv))
+		{
+			widthConv = clamp(7, 1, widthConv);
+		}
+
+		if (ImGui::InputInt("Pivot X", &pivotX))
+		{
+			pivotX = clamp(widthConv-1, 0, pivotX);
+		}
+
+		if (ImGui::InputInt("Pivot Y", &pivotY))
+		{
+			pivotY = clamp(heightConv - 1, 1, pivotY);
+		}
 	}
+	ImGui::Checkbox("Use GPU", &useGPU);
 
-	if (ImGui::InputInt("Pivot X", &pivotX))
+	if (ImGui::Button("Apply convolution"))
 	{
-		pivotX = clamp(widthConv-1, 0, pivotX);
-	}
+		std::unique_ptr<ED::RawData> negative;
+		
+		if (IsGlobal)
+		{
+			auto conv = useGPU ? convsGlobalGPU[idxConv] : convsGlobal[idxConv];
 
-	if (ImGui::InputInt("Pivot Y", &pivotY))
-	{
-		pivotY = clamp(heightConv - 1, 1, pivotY);
-	}
+			negative.reset(conv(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()));
 
-	ImGui::Text("Color button with Picker:");
-	ImGui::SameLine(); HelpMarker("With the ImGuiColorEditFlags_NoInputs flag you can hide all the slider/text inputs.\nWith the ImGuiColorEditFlags_NoLabel flag you can pass a non-empty label which will only be used for the tooltip and picker popup.");
+		}
+		else if(IsLocal)
+		{
+			auto conv = useGPU ? convsLocalGPU[idxConv -3] : convsLocal[idxConv-3];
 
+			negative.reset(conv(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels(), widthConv, heightConv, pivotX, pivotY));
+		}
+		else
+		{
+			//negative.reset(ED::ApplyConvolutionHA(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()));
+		}
 
-
-	if (texOGImg)
-	{
-		//ImGui::Image(my_tex_id, ImVec2(my_tex_w, my_tex_h), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1.0f, 1.0f, 1.0f, 1.0f), ImVec4(1.0f, 1.0f, 1.0f, 0.5f));
-	}
-
-	if (ImGui::Button("recompile"))
-	{
-		std::unique_ptr<ED::RawData> negative{ ED::ApplyMedian(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()) };
 		texId = ED::GetTexture(negative.get(), img->GetWidth(), img->GetHeight());
 	}
+
+
+
 
 	//if (ImGui::Button("Save Image"))
 	//{
