@@ -31,9 +31,14 @@ namespace ED {
 
 	using RawData = unsigned char;
 
-	std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, int width, int height, int pivotX, int pivotY);
+	std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, const std::string& uniforms, int width, int height, int pivotX, int pivotY);
 	std::string BuildConvolution(std::vector<float> vals, const std::string& name);
-	std::string ApplyGreyScale(const std::string& varName);
+	
+	std::string OnlyOnce(const std::string& defName, const std::string& shaderFunc);
+	std::string UseGreyScale();
+	std::string UseBW();
+	std::string UseGradient();
+
 	std::string BuildGlobalShader(const std::string& op, const std::string& uniforms = {});
 	
 	RawData* ForEachConvolution(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, int convWidth, int convHeight, int pivotX, int pivotY, std::function<void()> init, std::function<void(RawData*, int ix, int iy, int ic)> op, std::function<void(RawData*)> end);

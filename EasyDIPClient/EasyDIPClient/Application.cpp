@@ -230,14 +230,12 @@ void Application::ImGui()
 		if (IsGlobal)
 		{
 			auto conv = useGPU ? convsGlobalGPU[idxConv] : convsGlobal[idxConv];
-
 			negative.reset(conv(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()));
 
 		}
 		else if(IsLocal)
 		{
 			auto conv = useGPU ? convsLocalGPU[idxConv -3] : convsLocal[idxConv-3];
-
 			negative.reset(conv(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels(), widthConv, heightConv, pivotX, pivotY));
 		}
 		else

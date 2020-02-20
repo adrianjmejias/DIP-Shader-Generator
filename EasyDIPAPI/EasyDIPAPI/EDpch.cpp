@@ -7,14 +7,52 @@
 #include <stb_image_write.h>
 namespace ED
 {
-	std::string ApplyGreyScale(const std::string& varName) {
 
-		return "{float color_greyscale_ = dot("+ varName +", vec3(0.2125f, 0.7154f, 0.0721f));\n"
-			+ varName + "= vec3(color_greyscale_);\n}";
+	
+	const std::string SHADER_DEFINE_BW = "DEF_SU_BW";
+	const std::string SHADER_DEFINE_GREY = "DEF_SU_GREYSCALE";
+	const std::string SHADER_DEFINE_GRADIENT = "DEF_SU_GREYSCALE";
+		
+	std::string OnlyOnce(const std::string& defName, const std::string& shaderFunc)
+	{
+		return
+			"//#ifndef "+ defName +"\n"
+			"//#define "+ defName + "\n"+
+			shaderFunc+
+			"//#endif // end" + defName +"\n";
 	}
-	std::string ApplyNegative(const std::string& varName) {
-		return varName + " = 1- " + varName;
+
+	std::string UseGradient()
+	{
+		return OnlyOnce(SHADER_DEFINE_GRADIENT,
+			"vec3 SU_GRADIENT(vec3 color)"
+			"{"
+			"	return sqrt(a*a + b*b)\n"
+			"}"
+		);
 	}
+
+	std::string UseGreyScale() {
+		return OnlyOnce(SHADER_DEFINE_GREY,
+			"vec3 SU_GREYSCALE(vec3 color)"
+			"{"
+				"float gcolor= dot(color, vec3(0.2125f, 0.7154f, 0.0721f));\n"
+				"return vec3(gcolor);\n"
+			"}"
+		);
+	}
+
+	std::string UseBW() {
+		return OnlyOnce(SHADER_DEFINE_BW,
+			UseGreyScale() + 
+			"vec3 SU_BW(vec3 color, float threshold)"
+			"{"
+				"float c = SU_GREYSCALE(color).r;"
+				"return vec3(c < threshold ? 0.f : 1.f);\n"
+			"}"
+		);
+	}
+		
 	std::string BuildGlobalShader(const std::string& op, const std::string& uniforms)
 	{
 
@@ -28,7 +66,7 @@ namespace ED
 			"void main(){\n"
 
 				"vec2 actPos =(fragPos.xy + 1)/2.f;\n"
-				"actPos.y = 1 - actPos.y;\n"
+				//"actPos.y = 1 - actPos.y;\n"
 				"fragColor = vec4(texture(tex,actPos).rgb,1);\n"
 				+op+
 			"}\n");
@@ -36,8 +74,7 @@ namespace ED
 
 		return init;
 	}
-	std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, int width, int height, int pivotX, int pivotY)
-	{
+	std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, const std::string& uniforms, int width, int height, int pivotX, int pivotY)	{
 		std::string init(
 			"#version 330 core\n"
 			"in vec2 fragPos;\n"
@@ -45,9 +82,12 @@ namespace ED
 			"uniform float imgWidth;\n"
 			"uniform float imgHeight;\n"
 			"out vec4 fragColor;\n"
+
+			+uniforms+
+
 			"void main(){\n"
 			"vec2 actPos =(fragPos.xy + 1)/2.f;\n"
-			"actPos.y = 1 - actPos.y;\n"
+			//"actPos.y = 1 - actPos.y;\n"
 			"vec2 d = vec2(1.f/imgWidth, 1.f/imgHeight);\n"
 			"vec2 uAcum = vec2(0);\n"
 			"int convI = 0;\n"

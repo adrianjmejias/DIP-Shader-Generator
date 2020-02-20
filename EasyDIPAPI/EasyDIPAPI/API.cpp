@@ -2,7 +2,6 @@
 #include "API.h"
 
 namespace ED {
-
 	std::unique_ptr<Quad> quad;
 
 	std::unique_ptr<Shader> greyShader;
@@ -112,12 +111,9 @@ namespace ED {
 		glDeleteTextures(1, &texture);
 		glDeleteTextures(1, &renderedTexture);
 
-		glViewport(0, 0, m_viewport[3], m_viewport[4
-		]);
+		glViewport(0, 0, m_viewport[3], m_viewport[4]);
 		return out;
 	}
-
-
 
 	RawData* ApplyGrey(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
 		return ForEachPixel(data, width, height, nChannels, [](RawData* dest, RawData* src) {
@@ -361,18 +357,18 @@ namespace ED {
 
 		std::string fragNegative = BuildGlobalShader(
 			"fragColor = 1 - fragColor;"
-			//"fragColor = vec4(1,0,0,1);"
 		);
 
 		std::string fragGreyscale = BuildGlobalShader(
 			//"fragColor = 1 - fragColor;"
-			ApplyGreyScale("fragColor.rgb")
+			"fragColor.rgb = SU_GREYSCALE(fragColor.rgb);",
+			UseGreyScale()
 		);
 
 		std::string fragBW = BuildGlobalShader(
 			//"fragColor = 1 - fragColor;"
-			ApplyGreyScale("fragColor.rgb") +
-			"fragColor = ((fragColor.r > 150)? 1: 0);"
+			"fragColor.rgb = SU_BW(fragColor.rgb, 150);",
+			UseBW()
 		);
 	
 
@@ -394,21 +390,26 @@ namespace ED {
 			"vec3 avgX = vec3(0);\n"
 			"vec3 avgY = vec3(0);\n"
 			,
-
-			"#define GRADIENT(a,b) sqrt(a*a + b*b)\n"
-			
 			"vec3 color = texture(tex, nUv).rgb;\n"
 			"avgX +=  color * convX[convI];\n"
 			"avgY += color * convY[convI];\n"
 			,
-
-			"fragColor = vec4(GRADIENT(avgY, avgX),1);\n",
+			"fragColor = vec4(SU_GRADIENT(avgY, avgX),1);\n",
+			UseGradient(),
 			3, 3, 1, 1);
 
+
+		std::cout << "grey shader" << std::endl;
 		greyShader.reset(Shader::FromString(vert.c_str(), fragGreyscale.c_str()));
+
+		std::cout << "bw shader" << std::endl;
 		bwShader.reset(Shader::FromString(vert.c_str(), fragBW.c_str()));
+		std::cout << "negative shader" << std::endl;
+
 		negativeShader.reset(Shader::FromString(vert.c_str(), fragNegative.c_str()));
 		
+		std::cout << "sobel shader" << std::endl;
+
 		sobelShader.reset(Shader::FromString(vert.c_str(), sobel.c_str()));
 		return true;
 
