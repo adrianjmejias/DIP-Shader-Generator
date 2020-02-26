@@ -1,0 +1,65 @@
+\hypertarget{class_e_d_convolution}{}\doxysection{E\+D\+Convolution Class Reference}
+\label{class_e_d_convolution}\index{EDConvolution@{EDConvolution}}
+Inheritance diagram for E\+D\+Convolution\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_e_d_convolution}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_a734cbadad7e4068210a9f2cee9e11a7b}\label{class_e_d_convolution_a734cbadad7e4068210a9f2cee9e11a7b}} 
+\mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$ {\bfseries Apply\+Convolution} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&source, \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$destiny=nullptr)
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_a1caa74e02daa36cbca9e15f93d3708ee}\label{class_e_d_convolution_a1caa74e02daa36cbca9e15f93d3708ee}} 
+\mbox{\hyperlink{class_e_d_convolution}{E\+D\+Convolution}} \& {\bfseries operator=} (const \mbox{\hyperlink{class_e_d_convolution}{E\+D\+Convolution}} \&conv)
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_a1b5595184972826737a91a6f916e1f05}\label{class_e_d_convolution_a1b5595184972826737a91a6f916e1f05}} 
+static std\+::vector$<$ float $>$ {\bfseries Normalize} (std\+::vector$<$ float $>$ d)
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_aef829f7b0036e7352dee4baddf4b789d}\label{class_e_d_convolution_aef829f7b0036e7352dee4baddf4b789d}} 
+static \mbox{\hyperlink{class_e_d_convolution}{E\+D\+Convolution}} $\ast$ {\bfseries Create\+Custom} (std\+::vector$<$ float $>$ data, std\+::vector$<$ float $>$ constant, int w, int h, int px, int py, int sx=1, int sy=1)
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_aa7c829d7f37d0c2afc128556c0d08cd5}\label{class_e_d_convolution_aa7c829d7f37d0c2afc128556c0d08cd5}} 
+static \mbox{\hyperlink{class_e_d_convolution}{E\+D\+Convolution}} $\ast$ {\bfseries Create\+Negative} ()
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_a7ee72a90b95ef4d47497a279aaebd953}\label{class_e_d_convolution_a7ee72a90b95ef4d47497a279aaebd953}} 
+static \mbox{\hyperlink{class_e_d_convolution}{E\+D\+Convolution}} $\ast$ {\bfseries Create\+Copy\+Pass} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_af7d38301cad3eb7bf75c32100988f213}\label{class_e_d_convolution_af7d38301cad3eb7bf75c32100988f213}} 
+int {\bfseries width}
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_a77165fd4aeca193db28d748c60f3ba61}\label{class_e_d_convolution_a77165fd4aeca193db28d748c60f3ba61}} 
+int {\bfseries height}
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_afba89805e25cf8c5a04172e847f26de4}\label{class_e_d_convolution_afba89805e25cf8c5a04172e847f26de4}} 
+int {\bfseries sx}
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_a76dcb92bf36cb9ee9706bcfe271570de}\label{class_e_d_convolution_a76dcb92bf36cb9ee9706bcfe271570de}} 
+int {\bfseries sy}
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_aa91e7be4388e745ccf4cb5f30c49b527}\label{class_e_d_convolution_aa91e7be4388e745ccf4cb5f30c49b527}} 
+int {\bfseries px}
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_abc128fba6ed4f9296cff18c8c9ce9f2f}\label{class_e_d_convolution_abc128fba6ed4f9296cff18c8c9ce9f2f}} 
+int {\bfseries py}
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_a715000203faf646ca9aef8f21a8645b8}\label{class_e_d_convolution_a715000203faf646ca9aef8f21a8645b8}} 
+std\+::vector$<$ float $>$ {\bfseries constant}
+\item 
+\mbox{\Hypertarget{class_e_d_convolution_ac695be8145f5dad436b90c3fb8b9802c}\label{class_e_d_convolution_ac695be8145f5dad436b90c3fb8b9802c}} 
+std\+::vector$<$ float $>$ {\bfseries data}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+E\+D\+Convolution.\+h\item 
+E\+D\+Convolution.\+cpp\end{DoxyCompactItemize}

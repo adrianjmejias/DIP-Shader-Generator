@@ -15,59 +15,66 @@ class Application
 {
 	//template <typename TT> using ptr = std::shared_ptr<TT>;
 	//ImGui::FileBrowser fileDialog;
-
+	unsigned char* imgData;
+	int imgWidth;
+	int imgHeight;
+	int nChannels;
 	bool useGPU = true;
 	ED::GlobalConv convsGlobal[3] = {
-		ED::ApplyNegative,
-		ED::ApplyGrey,
-		ED::ApplyBW,
+		//ED::ApplyNegative,
+		//ED::ApplyGrey,
+		//ED::ApplyBW,
 	};
 
 	ED::GlobalConv convsGlobalGPU[3] = {
-		ED::ApplyNegativeHA,
-		ED::ApplyGreyHA,
-		ED::ApplyBWHA,
+		//ED::ApplyNegativeHA,
+		//ED::ApplyGreyHA,
+		//ED::ApplyBWHA,
 	};
 
 	ED::LocalConv convsLocal[6] = {
-		ED::ApplySobel,
-		ED::ApplyRoberts,
-		ED::ApplyPrewitt,
+		//ED::ApplySobel,
+		//ED::ApplyRoberts,
+		//ED::ApplyPrewitt,
 
-		ED::ApplyBox,
-		ED::ApplyMedian,
-		ED::ApplyLaplaceGauss,
+		//ED::ApplyBox,
+		//ED::ApplyMedian,
+		//ED::ApplyLaplaceGauss,
 	};
 
 	ED::LocalConv convsLocalGPU[6] = {
-		ED::ApplySobel,
-		ED::ApplyRoberts,
-		ED::ApplyPrewitt,
+		//ED::ApplySobel,
+		//ED::ApplyRoberts,
+		//ED::ApplyPrewitt,
 
-		ED::ApplyBox,
-		ED::ApplyMedian,
-		ED::ApplyLaplaceGauss,
+		//ED::ApplyBoxHA,
+		//ED::ApplyMedian,
+		//ED::ApplyLaplaceGauss,
 	};
 
 	GLFWwindow *window;
 
-	EDImage *img;
+	//EDImage *img;
 	std::unique_ptr<Shader> basicShader;
 	unsigned int texId = 0;
 	unsigned int texOGImg = 0;
 
 	int windowWidth;
 	int windowHeight;
-	int widthConv = 1;
-	int heightConv = 1;
-	float color[7][7][4];
-	int pivotX = 0, pivotY = 0;
+	int widthConv = 7;
+	int heightConv = 7;
+	int pivotX = 3;
+	int pivotY = 3;
 	bool show_demo_window = true;
+
+	int top = 0;
+	int bottom = 0;
+	int left = 0;
+	int right = 0;
 
 public:
 	Application();
 	~Application();
-	void Save(EDImage* img, const std::string& path);
 	void MainLoop();
 	void Render();
 	void ImGui();

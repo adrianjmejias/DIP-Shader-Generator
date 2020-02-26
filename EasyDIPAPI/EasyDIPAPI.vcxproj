@@ -90,6 +90,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="EasyDIPAPI\API.h" />
+    <ClInclude Include="EasyDIPAPI\API_CPU.h" />
+    <ClInclude Include="EasyDIPAPI\API_GPU.h" />
+    <ClInclude Include="EasyDIPAPI\Convolutions.h" />
     <ClInclude Include="EasyDIPAPI\EDImage.h" />
     <ClInclude Include="EasyDIPAPI\EDpch.h" />
     <ClInclude Include="EasyDIPAPI\Quad.h" />
@@ -97,6 +100,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EasyDIPAPI\API.cpp" />
+    <ClCompile Include="EasyDIPAPI\API_CPU.cpp" />
+    <ClCompile Include="EasyDIPAPI\API_GPU.cpp" />
+    <ClCompile Include="EasyDIPAPI\Convolutions.cpp" />
     <ClCompile Include="EasyDIPAPI\EDImage.cpp" />
     <ClCompile Include="EasyDIPAPI\EDpch.cpp" />
     <ClCompile Include="EasyDIPAPI\Quad.cpp" />

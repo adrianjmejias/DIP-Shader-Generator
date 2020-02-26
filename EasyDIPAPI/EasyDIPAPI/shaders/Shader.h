@@ -48,6 +48,12 @@ class Shader
 	}
 
 public:
+
+	~Shader() {
+		glDeleteProgram(ID);
+	}
+
+
 	static std::string GetSrcFromFile(const char* vertexPath)
 	{
 		// 1. retrieve the vertex/fragment source code from filePath
@@ -96,9 +102,10 @@ public:
 		return s;
 	}
 	
-
+	
 	void use()
 	{
+		
 		glUseProgram(ID);
 	}
 	// utility uniform functions

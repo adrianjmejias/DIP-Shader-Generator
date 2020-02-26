@@ -13,6 +13,9 @@
     <ClInclude Include="EasyDIPAPI\shaders\Shader.h">
       <Filter>shaders</Filter>
     </ClInclude>
+    <ClInclude Include="EasyDIPAPI\API_CPU.h" />
+    <ClInclude Include="EasyDIPAPI\API_GPU.h" />
+    <ClInclude Include="EasyDIPAPI\Convolutions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EasyDIPAPI\API.cpp" />
@@ -22,5 +25,8 @@
     <ClCompile Include="EasyDIPAPI\shaders\Shader.cpp">
       <Filter>shaders</Filter>
     </ClCompile>
+    <ClCompile Include="EasyDIPAPI\API_GPU.cpp" />
+    <ClCompile Include="EasyDIPAPI\API_CPU.cpp" />
+    <ClCompile Include="EasyDIPAPI\Convolutions.cpp" />
   </ItemGroup>
 </Project>

@@ -1,35 +1,20 @@
 #pragma once
 #include "EDpch.h"
-#include "EDImage.h"
-namespace ED {
+#include "API_CPU.h"
+#include "API_GPU.h"
 
-	using GlobalConv = std::function<RawData*(RawData*, unsigned int, unsigned int, unsigned int)>;
-	using LocalConv  = std::function<RawData*(RawData*, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int)>;
-	
+/**
+ *  @file   API.h
+ *  @brief  Graphics Context Interface
+ *  @author Somebody else
+ *  @date   2012-02-20
+ ***********************************************/
 
-	std::vector<float> Normalize(std::vector<float> d);
-
-	RawData* ApplyConvolutionHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, Shader& s, unsigned int *tex = nullptr);
-	
-	
-	RawData* ApplyGreyHA(RawData*, unsigned int, unsigned int, unsigned int);
-	RawData* ApplyNegativeHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
-	RawData* ApplyBWHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
-
-	RawData* ApplySobelHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
-	//RawData* ApplyRobertsHA(RawData*, unsigned int, unsigned int);
-	//RawData* ApplyPrewittHA(RawData*, unsigned int, unsigned int);
-	//RawData* ApplyBoxHA(RawData*, unsigned int, unsigned int);
-	//RawData* ApplyMedianHA(RawData*, unsigned int, unsigned int);
-	//RawData* ApplyLaplaceGaussHA(RawData*, unsigned int, unsigned int);
-
-
-
-	//-Cargar imagen.
-	//	- Mostrar información sobre la imagen : dimensiones, bits por pixel, cantidad única de colores and dpi
-	//	(Dots Per Inch).
-	//	- Obtener el número de colores únicos que componen la imagen.
-	//	- Obtener el histograma de la imagen
+ //-Cargar imagen.
+ //	- Mostrar información sobre la imagen : dimensiones, bits por pixel, cantidad única de colores and dpi
+ //	(Dots Per Inch).
+ //	- Obtener el número de colores únicos que componen la imagen.
+ //	- Obtener el histograma de la imagen
 /*	-Aplicar un kernel arbitrario a la imagen.Para ello debe haber una forma simple y práctica de asignar
 		los valores a cada posición del kernel.
 		- Se debe poder especificar el tamaño del kernel a utilizar para cada uno de los filtros.Cualquier
@@ -41,30 +26,14 @@ namespace ED {
 		- Salvar imagen.
 		- Las funciones del API deben ser demostradas a través de una aplicación que incorpore escalamiento
 		y rotación libre de la imagen, así como acercamiento y alejamiento(Zoom in / Zoom out).*/
+
+
+
+namespace ED {
+
+	bool Load(const std::string& path, RawData*& data, int& width, int height, int nChannels);
+
+	bool Save(const std::string& fileName, RawData* data, int width, int height, int nChannels);
 	
-	
-
-	RawData* ApplyNegative(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
-	RawData* ApplyGrey(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
-	RawData* ApplyBW(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels);
-
-
-	RawData* ApplySobel(RawData* data, unsigned int width, unsigned int height, int nChannels,
-		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
-
-	RawData* ApplyRoberts(RawData* data, unsigned int width, unsigned int height, int nChannels,
-		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
-
-	RawData* ApplyPrewitt(RawData* data, unsigned int width, unsigned int height, int nChannels,
-		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
-
-	RawData* ApplyBox(RawData* data, unsigned int width, unsigned int height, int nChannels,
-		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
-
-	RawData* ApplyMedian(RawData* data, unsigned int width, unsigned int height, int nChannels,
-		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
-
-	RawData* ApplyLaplaceGauss(RawData* data, unsigned int width, unsigned int height, int nChannels,
-		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY);
 	bool EDInit();
 }

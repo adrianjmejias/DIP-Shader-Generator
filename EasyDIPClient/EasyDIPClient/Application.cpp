@@ -82,7 +82,7 @@ Application::Application() {
 
 	ED::EDInit();
 
-	if (EDImage::TryLoad("../valve.png", img))
+	if (ED::Load("../valve.png", imgData, imgWidth, imgHeight, nChannels))
 	{
 		std::cout << "img loaded successfully\n";
 	}
@@ -108,17 +108,7 @@ Application::~Application() {
 	//delete bw;
 }
 
-void Application::Save(EDImage* img, const std::string& path)
-{
-	if (EDImage::TrySave(*img, path))
-	{
-		std::cout << "success " << path << " save \n";
-	}
-	else
-	{
-		std::cout << "failed " << path << " save \n";
-	}
-}
+
 
 void Application::MainLoop()
 {
@@ -201,25 +191,51 @@ void Application::ImGui()
 
 	if (!IsGlobal)
 	{
+
+		ImGui::Text("Img width %d", imgWidth);
+
+
 		if (ImGui::InputInt("Convolution Height", &heightConv))
 		{
-			heightConv = clamp(7, 1, heightConv);
+			heightConv = ED::clamp(7, 1, heightConv);
 		}
 
 		if (ImGui::InputInt("Convolution Width", &widthConv))
 		{
-			widthConv = clamp(7, 1, widthConv);
+			widthConv = ED::clamp(7, 1, widthConv);
 		}
 
 		if (ImGui::InputInt("Pivot X", &pivotX))
 		{
-			pivotX = clamp(widthConv-1, 0, pivotX);
+			pivotX = ED::clamp(widthConv-1, 0, pivotX);
 		}
 
 		if (ImGui::InputInt("Pivot Y", &pivotY))
 		{
-			pivotY = clamp(heightConv - 1, 1, pivotY);
+			pivotY = ED::clamp(heightConv - 1, 1, pivotY);
 		}
+		if (ImGui::InputInt("padding top", &top))
+		{
+			//pivotY = clamp(heightConv - 1, 1, top);
+		}
+
+		if (ImGui::InputInt("padding right", &right))
+		{
+			//pivotY = clamp(heightConv - 1, 1, top);
+		}
+
+		if (ImGui::InputInt("padding bottom", &bottom))
+		{
+			//pivotY = clamp(heightConv - 1, 1, top);
+		}
+
+		if (ImGui::InputInt("padding left", &left))
+		{
+			//pivotY = clamp(heightConv - 1, 1, top);
+		}
+
+
+
 	}
 	ImGui::Checkbox("Use GPU", &useGPU);
 
@@ -230,20 +246,20 @@ void Application::ImGui()
 		if (IsGlobal)
 		{
 			auto conv = useGPU ? convsGlobalGPU[idxConv] : convsGlobal[idxConv];
-			negative.reset(conv(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()));
+			negative.reset(conv(static_cast<ED::RawData*>(imgData), imgWidth, imgHeight, nChannels));
 
 		}
 		else if(IsLocal)
 		{
 			auto conv = useGPU ? convsLocalGPU[idxConv -3] : convsLocal[idxConv-3];
-			negative.reset(conv(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels(), widthConv, heightConv, pivotX, pivotY));
+			negative.reset(conv(imgData, imgWidth, imgHeight, nChannels, top, right, bottom, left, pivotX, pivotY));
 		}
 		else
 		{
 			//negative.reset(ED::ApplyConvolutionHA(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()));
 		}
 
-		texId = ED::GetTexture(negative.get(), img->GetWidth(), img->GetHeight());
+		texId = ED::GetTexture(negative.get(), imgWidth, imgHeight);
 	}
 
 

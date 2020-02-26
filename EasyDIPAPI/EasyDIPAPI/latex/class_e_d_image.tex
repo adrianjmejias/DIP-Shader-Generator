@@ -1,0 +1,86 @@
+\hypertarget{class_e_d_image}{}\doxysection{E\+D\+Image Class Reference}
+\label{class_e_d_image}\index{EDImage@{EDImage}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_e_d_image_ae8989e3d98fb8bd6a704f4a8c074f9c6}\label{class_e_d_image_ae8989e3d98fb8bd6a704f4a8c074f9c6}} 
+unsigned char $\ast$ {\bfseries Get} (int x, int y) const
+\item 
+\mbox{\Hypertarget{class_e_d_image_ab33b35ce083408a7fbf71f254aa94e2c}\label{class_e_d_image_ab33b35ce083408a7fbf71f254aa94e2c}} 
+void {\bfseries Set} (int x, int y, unsigned char $\ast$color, int n\+Channels)
+\item 
+\mbox{\Hypertarget{class_e_d_image_a59d1b7e4b8015b2332fc80e0db219bc9}\label{class_e_d_image_a59d1b7e4b8015b2332fc80e0db219bc9}} 
+int {\bfseries Get\+Width} () const
+\item 
+\mbox{\Hypertarget{class_e_d_image_a6a8f84eca19e81953ec8720ed0321b42}\label{class_e_d_image_a6a8f84eca19e81953ec8720ed0321b42}} 
+int {\bfseries Get\+Height} () const
+\item 
+\mbox{\Hypertarget{class_e_d_image_affb162043b6de41ad99d5869d4d9d757}\label{class_e_d_image_affb162043b6de41ad99d5869d4d9d757}} 
+int {\bfseries Get\+N\+Channels} () const
+\item 
+\mbox{\Hypertarget{class_e_d_image_ab464553bdbc7ece3b580f6a92dde6bd2}\label{class_e_d_image_ab464553bdbc7ece3b580f6a92dde6bd2}} 
+int {\bfseries Get\+Width\+Channels} () const
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_e_d_image_a6c698ffd2673a8eb8bc1465a86a5b4dc}\label{class_e_d_image_a6c698ffd2673a8eb8bc1465a86a5b4dc}} 
+static bool {\bfseries Try\+Load} (const std\+::string \&path, \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$\&img)
+\item 
+\mbox{\Hypertarget{class_e_d_image_ad6728cca05b0a4a2c20406454c8e3dbf}\label{class_e_d_image_ad6728cca05b0a4a2c20406454c8e3dbf}} 
+static bool {\bfseries Try\+Save} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&img, const std\+::string \&file\+Name)
+\item 
+\mbox{\Hypertarget{class_e_d_image_ad1f011b5b2e5f1d606a62efd3d81454e}\label{class_e_d_image_ad1f011b5b2e5f1d606a62efd3d81454e}} 
+static bool {\bfseries Try\+Save} (const E\+D\+::\+Raw\+Data $\ast$data, const std\+::string file\+Name, int width, int height, int n\+Channels)
+\item 
+\mbox{\Hypertarget{class_e_d_image_ab6d494844f6da51cb5a2ee389e47d91e}\label{class_e_d_image_ab6d494844f6da51cb5a2ee389e47d91e}} 
+static \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$ {\bfseries Create\+Canvas} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&other, \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$destiny=nullptr)
+\item 
+\mbox{\Hypertarget{class_e_d_image_ae82e08fc84c2fd206d4c3adeb4686e02}\label{class_e_d_image_ae82e08fc84c2fd206d4c3adeb4686e02}} 
+static bool {\bfseries Compatibles} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imA, const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imB)
+\item 
+\mbox{\Hypertarget{class_e_d_image_a64a6d9d087b17e32ff4d5207c16e15d1}\label{class_e_d_image_a64a6d9d087b17e32ff4d5207c16e15d1}} 
+static \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$ {\bfseries Operate} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imA, const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imB, std\+::function$<$ void(unsigned char $\ast$, unsigned char $\ast$, unsigned char $\ast$, int)$>$ operation, \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$destiny=nullptr)
+\item 
+\mbox{\Hypertarget{class_e_d_image_afe1bec5986a91bc7a33597701c7c188a}\label{class_e_d_image_afe1bec5986a91bc7a33597701c7c188a}} 
+static \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$ {\bfseries Add} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imA, const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imB, \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$destiny=nullptr)
+\item 
+\mbox{\Hypertarget{class_e_d_image_abd0dc2d6695c073ed3374343990775b6}\label{class_e_d_image_abd0dc2d6695c073ed3374343990775b6}} 
+static \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$ {\bfseries Gradient} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imA, const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imB, \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$destiny=nullptr)
+\item 
+\mbox{\Hypertarget{class_e_d_image_ae812f1d70a75ae7ddcdbf02debb3ecf7}\label{class_e_d_image_ae812f1d70a75ae7ddcdbf02debb3ecf7}} 
+static \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$ {\bfseries Multiply} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imA, const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imB, \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$destiny=nullptr)
+\item 
+\mbox{\Hypertarget{class_e_d_image_a3426e877b521102a42c187d20360f804}\label{class_e_d_image_a3426e877b521102a42c187d20360f804}} 
+static \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$ {\bfseries Divide} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imA, const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imB, \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$destiny=nullptr)
+\item 
+\mbox{\Hypertarget{class_e_d_image_a54824d1510597219bf18ed6f234670ce}\label{class_e_d_image_a54824d1510597219bf18ed6f234670ce}} 
+static \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$ {\bfseries Substract} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imA, const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&imB, \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} $\ast$destiny=nullptr)
+\item 
+\mbox{\Hypertarget{class_e_d_image_a18b4b92c6fa8235159fa9a1e0ff40e3f}\label{class_e_d_image_a18b4b92c6fa8235159fa9a1e0ff40e3f}} 
+static void {\bfseries Get\+Histogram} (unsigned char $\ast$data, int width, int height, int n\+Channels)
+\item 
+\mbox{\Hypertarget{class_e_d_image_a12e35bb172d5fd2b34a77f297ec8a63a}\label{class_e_d_image_a12e35bb172d5fd2b34a77f297ec8a63a}} 
+static std\+::multiset$<$ unsigned char $>$ {\bfseries Get\+Unique\+Colors} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&im, int channel)
+\item 
+\mbox{\Hypertarget{class_e_d_image_a3cd10efe6943f6ad7d7dde877a52df5c}\label{class_e_d_image_a3cd10efe6943f6ad7d7dde877a52df5c}} 
+static std\+::multiset$<$ unsigned char $>$ {\bfseries Get\+Unique\+Colors} (unsigned char $\ast$data, unsigned int width, unsigned int height, int n\+Channels, int channel)
+\item 
+\mbox{\Hypertarget{class_e_d_image_a62a4fc87d46f59d0b13b20390dcd27ae}\label{class_e_d_image_a62a4fc87d46f59d0b13b20390dcd27ae}} 
+static unsigned int {\bfseries Get\+Unique\+Colors} (const \mbox{\hyperlink{class_e_d_image}{E\+D\+Image}} \&im)
+\item 
+\mbox{\Hypertarget{class_e_d_image_a0c3daeee0f818ce54307b78f52a80568}\label{class_e_d_image_a0c3daeee0f818ce54307b78f52a80568}} 
+static unsigned int {\bfseries Get\+Unique\+Colors} (unsigned char $\ast$data, unsigned int width, unsigned int height, int n\+Channels)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{class_e_d_image_aeb544b7280794f23379c95873930ff08}\label{class_e_d_image_aeb544b7280794f23379c95873930ff08}} 
+unsigned char $\ast$ {\bfseries data}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+E\+D\+Image.\+h\item 
+E\+D\+Image.\+cpp\end{DoxyCompactItemize}

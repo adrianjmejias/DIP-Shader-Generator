@@ -5,14 +5,37 @@
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
+
 namespace ED
 {
 
 	
 	const std::string SHADER_DEFINE_BW = "DEF_SU_BW";
 	const std::string SHADER_DEFINE_GREY = "DEF_SU_GREYSCALE";
-	const std::string SHADER_DEFINE_GRADIENT = "DEF_SU_GREYSCALE";
+	const std::string SHADER_DEFINE_GRADIENT = "DEF_SU_GRADIENT";
 		
+	float clamp(const float u, const float d, const float v)
+	{
+		return std::min(std::max(d,v), u);
+	}
+
+	std::vector<float> Normalize(std::vector<float> d)
+	{
+		float sum = 0;
+
+		for (float val : d)
+		{
+			sum += val;
+		}
+
+		for (float& val : d)
+		{
+			val /= sum;
+		}
+
+		return d;
+	}
+
 	std::string OnlyOnce(const std::string& defName, const std::string& shaderFunc)
 	{
 		return
@@ -21,17 +44,15 @@ namespace ED
 			shaderFunc+
 			"//#endif // end" + defName +"\n";
 	}
-
 	std::string UseGradient()
 	{
 		return OnlyOnce(SHADER_DEFINE_GRADIENT,
-			"vec3 SU_GRADIENT(vec3 color)"
-			"{"
-			"	return sqrt(a*a + b*b)\n"
-			"}"
+			"vec3 SU_GRADIENT(vec3 a, vec3 b)\n"
+			"{\n"
+			"	return sqrt(a*a + b*b);\n"
+			"}\n"
 		);
 	}
-
 	std::string UseGreyScale() {
 		return OnlyOnce(SHADER_DEFINE_GREY,
 			"vec3 SU_GREYSCALE(vec3 color)"
@@ -40,8 +61,7 @@ namespace ED
 				"return vec3(gcolor);\n"
 			"}"
 		);
-	}
-
+	}	  
 	std::string UseBW() {
 		return OnlyOnce(SHADER_DEFINE_BW,
 			UseGreyScale() + 
@@ -74,6 +94,57 @@ namespace ED
 
 		return init;
 	}
+	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(std::vector<float> fullConv, unsigned int actWidth, unsigned int actHeight, unsigned int top, unsigned int right, unsigned int bottom, unsigned int left)
+	{
+		bottom = actHeight - bottom;
+		right = actWidth - right;
+		int newWidth = right - left;
+		int newHeight = bottom - top;
+
+		if (newHeight <= 0)
+		{
+			throw "Bad Vertical boundaries";
+		}
+
+		if (newWidth <= 0)
+		{
+			throw "Bad Horizontal boundaries";
+		}
+
+		std::vector<float> reducedConv;
+		reducedConv.reserve(newWidth * newHeight);
+
+		for (int ii = top; ii < bottom; ii++) {
+			for (int jj = left; jj < right; jj++) {
+				reducedConv.push_back(fullConv[ii * actWidth + jj]);
+			}
+		}
+		return { reducedConv, newWidth, newHeight };
+	}
+
+
+
+	std::string UseForConv(int convWidth, int convHeight, int pivotX, int pivotY, const std::string &op) {
+
+		return
+			"{\n"
+				"vec2 initPos = actPos;"
+				"vec2 d = vec2(1.f/imgWidth, 1.f/imgHeight);\n"
+				"vec2 uAcum = vec2(0);\n"
+				"int convI = 0;\n"
+				"int width = " + std::to_string(convWidth) + ";\n"
+				"int height = " + std::to_string(convHeight) + ";\n"
+				"vec2 pivotDisplacement = vec2(" + std::to_string(pivotX) + ", " + std::to_string(pivotY) + ") * d;\n"
+				"actPos -= pivotDisplacement; \n"
+				"for(int yy = 0; yy < height; yy++, uAcum.y += d.y){\n"
+					"\tfor(int xx = 0; xx < width; xx++, uAcum.x += d.x, convI++){\n"
+						"vec2 nUv = actPos + uAcum;\n"
+						+ op +
+					"\t}\n"
+				"}\n"
+			"}\n";
+
+	}
 	std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, const std::string& uniforms, int width, int height, int pivotX, int pivotY)	{
 		std::string init(
 			"#version 330 core\n"
@@ -86,8 +157,7 @@ namespace ED
 			+uniforms+
 
 			"void main(){\n"
-			"vec2 actPos =(fragPos.xy + 1)/2.f;\n"
-			//"actPos.y = 1 - actPos.y;\n"
+			"vec2 actPos = (fragPos.xy + 1)/2.f;\n"
 			"vec2 d = vec2(1.f/imgWidth, 1.f/imgHeight);\n"
 			"vec2 uAcum = vec2(0);\n"
 			"int convI = 0;\n"
@@ -101,7 +171,6 @@ namespace ED
 					"vec2 nUv = actPos + uAcum;\n"
 					+ op +
 				"\t}\n"
-			"uAcum.x = 0;\n"
 			"}\n"
 			+ after+
 		"}\n");
@@ -110,6 +179,46 @@ namespace ED
 		return init;
 
 	}
+
+	
+	std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, const std::string& uniforms, int width, int height, int pivotX, int pivotY)	{
+		std::string init(
+			"#version 330 core\n"
+			"in vec2 fragPos;\n"
+			"uniform sampler2D tex;\n"
+			"uniform float imgWidth;\n"
+			"uniform float imgHeight;\n"
+			"out vec4 fragColor;\n"
+
+			+uniforms+
+
+			"void main(){\n"
+				"vec2 actPos = (fragPos.xy + 1)/2.f;\n"
+				"vec2 d = vec2(1.f/imgWidth, 1.f/imgHeight);\n"
+				"vec2 uAcum = vec2(0);\n"
+				"int convI = 0;\n"
+				"int width = " + std::to_string(width) + ";\n"
+				"int height = " + std::to_string(height) + ";\n"
+				"vec2 pivotDisplacement = vec2("+ std::to_string(pivotX)+", "+ std::to_string(pivotY) + ") * d;\n"
+				"actPos -= pivotDisplacement; \n"
+				+ before +
+				"for(int yy = 0; yy < height; yy++, uAcum.y += d.y){\n"
+					"\tfor(int xx = 0; xx < width; xx++, uAcum.x += d.x, convI++){\n"
+						"vec2 nUv = actPos + uAcum;\n"
+						+ op +
+					"\t}\n"
+				"}\n"
+				+ after+
+			"}\n"
+		
+		);
+
+
+		return init;
+
+	}
+
+
 	std::string BuildConvolution(std::vector<float> vals, const std::string& name)
 	{
 		std::string convolution = "float "+name+"[" + std::to_string(vals.size()) + "] = float[](";
