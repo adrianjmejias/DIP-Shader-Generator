@@ -16,7 +16,7 @@ namespace ED {
 	std::unique_ptr<Shader> median;
 	std::unique_ptr<Shader> laplaceGauss;
 
-	RawData* ApplySobelHA(PARAMS_LOCAL) {
+	//RawData* ApplySobelHA(PARAMS_LOCAL) {
 
 		auto [convX, newWidthX, newHeightX] = ReduceConvolution(sobelX, meta[0]);
 		auto [convY, newWidthY, newHeightY] = ReduceConvolution(sobelY, meta[1]);
@@ -42,7 +42,7 @@ namespace ED {
 				);
 
 
-				sobelShader.reset(Shader::FromString(vert.c_str(), sobel.c_str()));
+	//			sobelShader.reset(Shader::FromString(vert.c_str(), sobel.c_str()));
 
 
 
@@ -95,8 +95,8 @@ namespace ED {
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		s.setInt("tex", 0);
-		s.setFloat("imgWidth", imgWidth);
-		s.setFloat("imgHeight", imgHeight);
+		s.setFloat("imgWidth", static_cast<float>(imgWidth));
+		s.setFloat("imgHeight", static_cast<float>(imgHeight));
 
 		quad->Bind();
 		quad->Draw();

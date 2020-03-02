@@ -21,7 +21,6 @@ project "ImGui"
 	}
 
 	filter "system:windows"
-		systemversion "8.1"
 		cppdialect "C++17"
 		staticruntime "On"
 

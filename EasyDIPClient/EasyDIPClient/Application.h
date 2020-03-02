@@ -14,6 +14,7 @@ class Application
 {
 	//template <typename TT> using ptr = std::shared_ptr<TT>;
 	//ImGui::FileBrowser fileDialog;
+	std::unique_ptr<ED::Quad> quad;
 	unsigned char* imgData;
 	int imgWidth;
 	int imgHeight;
@@ -23,6 +24,21 @@ class Application
 
 	std::vector<ED::ConvMetaList> metaGlobal;
 	GlobalConvList convsGlobal = {
+	int nLocalConv = 0;
+	int nGlobalConv = 0;
+	bool dirty = true;
+
+
+	glm::vec2 scale{ 1 }, translate{ 0 };
+	glm::vec1 rot{0};
+
+	glm::mat4 model;
+
+	std::vector<std::vector< ED::Padding > > paddings;
+	std::vector<std::vector< ED::Pivot > > pivots;
+
+
+	ED::GlobalConv convsGlobal[3] = {
 		ED::ApplyNegative,
 		//ED::ApplyGrey,
 		//ED::ApplyBW,

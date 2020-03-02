@@ -24,7 +24,7 @@ disablewarnings { "26495" }
    group ""
 
 project "EasyDIPAPI"
-   systemversion "8.1"
+   systemversion "latest"
    architecture "x64"
 
    location("%{prj.name}")
@@ -42,6 +42,7 @@ project "EasyDIPAPI"
 		-- "%{IncludeDir.SDL}",
 		"%{IncludeDir.glad}",
       "%{IncludeDir.stb}",
+		"%{IncludeDir.glm}",
       
 
 	}
@@ -75,7 +76,7 @@ project "EasyDIPAPI"
 
 
 project "EasyDIPBenchmark"
-   systemversion "8.1"
+   systemversion "latest"
    location("%{prj.name}")
    kind "ConsoleApp"
    language "C++"
@@ -100,7 +101,7 @@ project "EasyDIPBenchmark"
 
             
 project "EasyDIPClient"
-   systemversion "8.1"
+   systemversion "latest"
    location("%{prj.name}")
    kind "ConsoleApp"
    language "C++"
