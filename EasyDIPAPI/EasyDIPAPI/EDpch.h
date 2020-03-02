@@ -20,13 +20,40 @@
 //Shader
 
 namespace ED {
-
+	
+	using Padding = std::tuple<int, int, int, int>;
+	using Pivot = std::tuple<int, int>;
+	using Dimensions = std::tuple<int, int>;
 	using RawData = unsigned char;
+	using ConvMeta = struct {
+	public:
+		int pivotX;
+		int pivotY;
+		int pTop, pBot, pLeft, pRight;
+		int width, height;
+	};
+
+	class Convolution : public ConvMeta
+	{
+
+	};
+
+	class LocalConvolution 
+	{
+
+	};
+
+	class GlobalConvolution 
+	{
+
+	};
+
+	using ConvMetaList = std::vector<ConvMeta>;
 
 	#define PARAMS_GLOBAL RawData* data, unsigned int width, unsigned int height, unsigned int nChannels
 
 	#define PARAMS_LOCAL RawData * data, unsigned int imgWidth, unsigned int imgHeight, int nChannels, \
-	std::vector< std::tuple<int,int,int,int> > padding, std::tuple<int,int>
+	std::vector< ConvMeta > meta
 
 
 	/*!
@@ -64,10 +91,15 @@ namespace ED {
 		}
 	}
 
+	std::string UseForConv(int convWidth, int convHeight, const Pivot &pi, const std::string &op);
+	std::string UseForConv(const ConvMeta& m, const std::string &op);
+	std::string UseForConv(int convWidth, int convHeight, int pivotX, int pivotY, const std::string &op);
 
+	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, const ConvMeta m);
+	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(std::vector<float> fullConv, unsigned int actWidth, unsigned int actHeight, int top, int right, int bottom, int left);
+	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, unsigned int actWidth, unsigned int actHeight, const Padding &p);
 
-	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(std::vector<float> fullConv, unsigned int actWidth, unsigned int actHeight, unsigned int top, unsigned int right, unsigned int bottom, unsigned int left);
-
+	std::string BuildShaderConv(const std::string& uniforms, const std::string& before, const std::string& op, const std::string& after);
 
 	std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, const std::string& uniforms, int width, int height, int pivotX, int pivotY);
 	std::string BuildConvolution(std::vector<float> vals, const std::string& name);

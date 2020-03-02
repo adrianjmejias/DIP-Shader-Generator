@@ -2,6 +2,14 @@
 
 
 namespace ED {
+
+	class Sobel {
+		//int threshhold;
+		void operator()() {
+
+		}
+	};
+
 	RawData* ApplySobel(PARAMS_LOCAL) {
 
 		std::vector<float> sobelX = {
@@ -17,7 +25,7 @@ namespace ED {
 
 		float acumX[4];
 		float acumY[4];
-		return ForEachConvolution(data, width, height, nChannels, 3, 3, 1, 1,
+		return ForEachConvolution(data, imgWidth, imgHeight, nChannels, 3, 3, 1, 1,
 			[&]() {
 			Assign<float>(acumX, nChannels, 0.f);
 			Assign<float>(acumY, nChannels, 0.f);

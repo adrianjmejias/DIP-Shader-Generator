@@ -94,7 +94,19 @@ namespace ED
 
 		return init;
 	}
-	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(std::vector<float> fullConv, unsigned int actWidth, unsigned int actHeight, unsigned int top, unsigned int right, unsigned int bottom, unsigned int left)
+
+
+	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, const ConvMeta m)
+	{
+		return ReduceConvolution(fullConv, m.width, m.height, m.pTop, m.pRight, m.pBot, m.pLeft);
+	}
+
+	
+	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, unsigned int actWidth, unsigned int actHeight, const Padding &p)
+	{
+		return ReduceConvolution(fullConv, actWidth, actHeight, std::get<0>(p), std::get<1>(p), std::get<2>(p), std::get<3>(p));
+	}
+	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(std::vector<float> fullConv, unsigned int actWidth, unsigned int actHeight, int top, int right, int bottom, int left)
 	{
 		bottom = actHeight - bottom;
 		right = actWidth - right;
@@ -122,7 +134,14 @@ namespace ED
 		return { reducedConv, newWidth, newHeight };
 	}
 
+	std::string UseForConv(const ConvMeta& m, const std::string &op) {
+		return UseForConv(m.width, m.height, m.pivotX, m.pivotY, op);
+	}
 
+	std::string UseForConv(int convWidth, int convHeight, const Pivot &pi, const std::string &op) {
+	
+		return UseForConv(convWidth, convHeight, std::get<0>(pi), std::get<1>(pi), op);
+	}
 
 	std::string UseForConv(int convWidth, int convHeight, int pivotX, int pivotY, const std::string &op) {
 
@@ -145,7 +164,7 @@ namespace ED
 			"}\n";
 
 	}
-	std::string BuildShaderConv(const std::string& before, const std::string& op, const std::string& after, const std::string& uniforms, int width, int height, int pivotX, int pivotY)	{
+	std::string BuildShaderConv(const std::string& uniforms, const std::string& before, const std::string& op, const std::string& after)	{
 		std::string init(
 			"#version 330 core\n"
 			"in vec2 fragPos;\n"
@@ -159,21 +178,11 @@ namespace ED
 			"void main(){\n"
 			"vec2 actPos = (fragPos.xy + 1)/2.f;\n"
 			"vec2 d = vec2(1.f/imgWidth, 1.f/imgHeight);\n"
-			"vec2 uAcum = vec2(0);\n"
-			"int convI = 0;\n"
-			"int width = " + std::to_string(width) + ";\n"
-			"int height = " + std::to_string(height) + ";\n"
-			"vec2 pivotDisplacement = vec2("+ std::to_string(pivotX)+", "+ std::to_string(pivotY) + ") * d;\n"
-			"actPos -= pivotDisplacement; \n"
-			+ before +
-			"for(int yy = 0; yy < height; yy++, uAcum.y += d.y){\n"
-				"\tfor(int xx = 0; xx < width; xx++, uAcum.x += d.x, convI++){\n"
-					"vec2 nUv = actPos + uAcum;\n"
-					+ op +
-				"\t}\n"
+				+ before +
+				op 
+				+ after+
 			"}\n"
-			+ after+
-		"}\n");
+		);
 
 
 		return init;

@@ -185,59 +185,65 @@ void Application::ImGui()
 		}
 		ImGui::EndCombo();
 	}
+	ImGui::Text("Img width %d", imgWidth);
+	ImGui::Text("Img height %d", imgHeight);
+	ImGui::Text("n Channels %d", nChannels);
+	ImGui::Checkbox("Use GPU", &useGPU);
 
-	bool IsGlobal = idxConv <= 2;
-	bool IsLocal = !IsGlobal && idxConv != 9;
 
+	bool IsGlobal = idxConv <= convsGlobal.size();
+	bool IsLocal = !IsGlobal && idxConv != 10;
+
+	auto meta = useGPU ? metaLocalHA : metaLocal;
 	if (!IsGlobal)
 	{
+		idxConv -= convsLocal.size();
 
-		ImGui::Text("Img width %d", imgWidth);
-
-
-		if (ImGui::InputInt("Convolution Height", &heightConv))
+		for (auto &c : meta[idxConv])
 		{
-			heightConv = ED::clamp(7, 1, heightConv);
+
 		}
-
-		if (ImGui::InputInt("Convolution Width", &widthConv))
-		{
-			widthConv = ED::clamp(7, 1, widthConv);
-		}
-
-		if (ImGui::InputInt("Pivot X", &pivotX))
-		{
-			pivotX = ED::clamp(widthConv-1, 0, pivotX);
-		}
-
-		if (ImGui::InputInt("Pivot Y", &pivotY))
-		{
-			pivotY = ED::clamp(heightConv - 1, 1, pivotY);
-		}
-		if (ImGui::InputInt("padding top", &top))
-		{
-			//pivotY = clamp(heightConv - 1, 1, top);
-		}
-
-		if (ImGui::InputInt("padding right", &right))
-		{
-			//pivotY = clamp(heightConv - 1, 1, top);
-		}
-
-		if (ImGui::InputInt("padding bottom", &bottom))
-		{
-			//pivotY = clamp(heightConv - 1, 1, top);
-		}
-
-		if (ImGui::InputInt("padding left", &left))
-		{
-			//pivotY = clamp(heightConv - 1, 1, top);
-		}
-
-
-
 	}
-	ImGui::Checkbox("Use GPU", &useGPU);
+
+	static ED::ConvMeta c;
+	if (ImGui::InputInt("Convolution Height", &c.width))
+	{
+		c.width = ED::clamp(7, 1, c.width);
+	}
+
+	if (ImGui::InputInt("Convolution Width", &c.height))
+	{
+		c.height = ED::clamp(7, 1, c.height);
+	}
+
+	if (ImGui::InputInt("Pivot X", &c.pivotX))
+	{
+		c.pivotX = ED::clamp(c.width-1, 0, c.pivotX);
+	}
+
+	if (ImGui::InputInt("Pivot Y", &c.pivotY))
+	{
+		c.pivotY = ED::clamp(c.height - 1, 1, c.pivotY);
+	}
+	if (ImGui::InputInt("padding top", &c.pTop))
+	{
+		//pivotY = clamp(heightConv - 1, 1, top);
+	}
+
+	if (ImGui::InputInt("padding right", &c.pRight))
+	{
+		//pivotY = clamp(heightConv - 1, 1, top);
+	}
+
+	if (ImGui::InputInt("padding bottom", &c.pBot))
+	{
+		//pivotY = clamp(heightConv - 1, 1, top);
+	}
+
+	if (ImGui::InputInt("padding left", &c.pLeft))
+	{
+		//pivotY = clamp(heightConv - 1, 1, top);
+	}
 
 	if (ImGui::Button("Apply convolution"))
 	{
@@ -251,8 +257,8 @@ void Application::ImGui()
 		}
 		else if(IsLocal)
 		{
-			auto conv = useGPU ? convsLocalGPU[idxConv -3] : convsLocal[idxConv-3];
-			negative.reset(conv(imgData, imgWidth, imgHeight, nChannels, top, right, bottom, left, pivotX, pivotY));
+			auto conv = useGPU ? convsLocalGPU[idxConv] : convsLocal[idxConv];
+			negative.reset(conv(imgData, imgWidth, imgHeight, nChannels, meta[idxConv]));
 		}
 		else
 		{

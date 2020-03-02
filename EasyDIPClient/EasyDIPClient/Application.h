@@ -1,12 +1,11 @@
 #include "EDClientpch.h"
 
 
-
-
-
 #ifndef __ED_CLIENT_APPLICATION__
 #define __ED_CLIENT_APPLICATION__
 
+using LocalConvList = std::vector<ED::LocalConv>;
+using GlobalConvList = std::vector<ED::GlobalConv>;
 
 
 
@@ -20,20 +19,25 @@ class Application
 	int imgHeight;
 	int nChannels;
 	bool useGPU = true;
-	ED::GlobalConv convsGlobal[3] = {
-		//ED::ApplyNegative,
+
+
+	std::vector<ED::ConvMetaList> metaGlobal;
+	GlobalConvList convsGlobal = {
+		ED::ApplyNegative,
 		//ED::ApplyGrey,
 		//ED::ApplyBW,
 	};
 
-	ED::GlobalConv convsGlobalGPU[3] = {
-		//ED::ApplyNegativeHA,
+	std::vector<ED::ConvMetaList> metaGlobalHA;
+	GlobalConvList convsGlobalGPU = {
+		ED::ApplyNegativeHA,
 		//ED::ApplyGreyHA,
 		//ED::ApplyBWHA,
 	};
 
-	ED::LocalConv convsLocal[6] = {
-		//ED::ApplySobel,
+	std::vector<ED::ConvMetaList> metaLocal;
+	LocalConvList convsLocal = {
+		ED::ApplySobel,
 		//ED::ApplyRoberts,
 		//ED::ApplyPrewitt,
 
@@ -41,9 +45,9 @@ class Application
 		//ED::ApplyMedian,
 		//ED::ApplyLaplaceGauss,
 	};
-
-	ED::LocalConv convsLocalGPU[6] = {
-		//ED::ApplySobel,
+	std::vector<ED::ConvMetaList> metaLocalHA;
+	LocalConvList convsLocalGPU = {
+		ED::ApplySobel,
 		//ED::ApplyRoberts,
 		//ED::ApplyPrewitt,
 
@@ -61,16 +65,10 @@ class Application
 
 	int windowWidth;
 	int windowHeight;
-	int widthConv = 7;
-	int heightConv = 7;
-	int pivotX = 3;
-	int pivotY = 3;
+
 	bool show_demo_window = true;
 
-	int top = 0;
-	int bottom = 0;
-	int left = 0;
-	int right = 0;
+
 
 public:
 	Application();
@@ -78,7 +76,7 @@ public:
 	void MainLoop();
 	void Render();
 	void ImGui();
-	
+
 	static void HelpMarker(const char* desc);
 };
 

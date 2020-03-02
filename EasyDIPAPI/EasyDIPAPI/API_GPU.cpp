@@ -18,23 +18,28 @@ namespace ED {
 
 	RawData* ApplySobelHA(PARAMS_LOCAL) {
 
-		//auto [convX, newWidth, newHeight] = ReduceConvolution(sobelX, 7, 7, top, right, bottom, left);
-		//auto [convY, newWidth, newHeight] = ReduceConvolution(sobelY, 7, 7, top, right, bottom, left);
+		auto [convX, newWidthX, newHeightX] = ReduceConvolution(sobelX, meta[0]);
+		auto [convY, newWidthY, newHeightY] = ReduceConvolution(sobelY, meta[1]);
 
 				std::string sobel = BuildShaderConv(
-					BuildConvolution(convX, "conv") +
-					//BuildConvolution({0,0,0,0,0,0,0,0,0,1}, "disp") +
-					"vec3 avgX = vec3(0);\n",
-
-					+ UseForConv(width, height, pivotX, pivotY,
-						"
-							"vec3 color = texture(tex, nUv).rgb;\n"
-							"avgX +=  color * conv[convI];\n",			
-						) +
-
-					"fragColor = vec4(avgX, 1);\n",
+					//uniforms
 					UseGradient(),
-					);
+					// before
+					BuildConvolution(convX, "convX") +
+					BuildConvolution(convY, "convY") +
+					"vec3 avgX = vec3(0);\n",
+					// op
+					UseForConv(meta[0],
+							"vec3 color = texture(tex, nUv).rgb;\n"
+							"avgX +=  color * conv[convI];\n"			
+						) +
+					UseForConv(meta[1],
+						"vec3 color = texture(tex, nUv).rgb;\n"
+						"avgX +=  color * conv[convI];\n"
+						),
+					// after
+					"fragColor = vec4(avgX, 1);\n"
+				);
 
 
 				sobelShader.reset(Shader::FromString(vert.c_str(), sobel.c_str()));
@@ -42,7 +47,7 @@ namespace ED {
 
 
 
-		return ApplyConvolutionHA(data, imgWidth, imgHeight7, nChannels, *sobelShader);
+		return ApplyConvolutionHA(data, imgWidth, imgHeight, nChannels, *sobelShader);
 	}
 
 	RawData* ApplyNegativeHA(PARAMS_GLOBAL) {

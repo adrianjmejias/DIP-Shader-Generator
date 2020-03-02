@@ -270,7 +270,7 @@ namespace ED {
 	bool EDInit()
 	{
 
-
+		EDInitGPU();
 		
 		//std::cout << "sobel shader" << std::endl;
 
