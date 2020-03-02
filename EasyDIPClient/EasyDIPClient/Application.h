@@ -15,25 +15,40 @@ class Application
 {
 	//template <typename TT> using ptr = std::shared_ptr<TT>;
 	//ImGui::FileBrowser fileDialog;
+	std::unique_ptr<ED::Quad> quad;
 	unsigned char* imgData;
 	int imgWidth;
 	int imgHeight;
 	int nChannels;
 	bool useGPU = true;
+	int nLocalConv = 0;
+	int nGlobalConv = 0;
+	bool dirty = true;
+
+
+	glm::vec2 scale{ 1 }, translate{ 0 };
+	glm::vec1 rot{0};
+
+	glm::mat4 model;
+
+	std::vector<std::vector< ED::Padding > > paddings;
+	std::vector<std::vector< ED::Pivot > > pivots;
+
+
 	ED::GlobalConv convsGlobal[3] = {
-		//ED::ApplyNegative,
+		ED::ApplyNegative,
 		//ED::ApplyGrey,
 		//ED::ApplyBW,
 	};
 
 	ED::GlobalConv convsGlobalGPU[3] = {
-		//ED::ApplyNegativeHA,
+		ED::ApplyNegativeHA,
 		//ED::ApplyGreyHA,
 		//ED::ApplyBWHA,
 	};
 
 	ED::LocalConv convsLocal[6] = {
-		//ED::ApplySobel,
+		ED::ApplySobel,
 		//ED::ApplyRoberts,
 		//ED::ApplyPrewitt,
 
@@ -43,7 +58,7 @@ class Application
 	};
 
 	ED::LocalConv convsLocalGPU[6] = {
-		//ED::ApplySobel,
+		ED::ApplySobel,
 		//ED::ApplyRoberts,
 		//ED::ApplyPrewitt,
 

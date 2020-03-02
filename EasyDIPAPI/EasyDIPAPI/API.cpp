@@ -255,7 +255,47 @@ namespace ED {
 		});
 	}
 
-	bool Load(const std::string& path, RawData*& data, int& width, int height, int nChannels)
+	std::vector<float> GetHistogram(RawData* data, unsigned int byteSize, int strideForNextColor, int offsetFrom0, bool normalize)
+	{
+		std::vector<float> count(256, 0);
+
+		for (size_t ii = offsetFrom0; ii < byteSize; ii += strideForNextColor)
+		{
+			count[data[ii]]++;
+		}
+
+		for (float& c : count)
+		{
+			c /= (byteSize/strideForNextColor);
+		}
+
+
+		return count;
+	}
+
+	int NumberOfUniqueColors(RawData* data, unsigned int byteSize, int strideForNextColor)
+	{
+		std::set<unsigned int> colors;
+
+
+		unsigned int aux = 0;
+
+		for (size_t ii = 0; ii < byteSize; ii += strideForNextColor)
+		{
+			aux = aux & 0;
+			for (size_t jj = 0; jj < strideForNextColor; jj++)
+			{
+				aux = aux << sizeof(RawData);
+				aux = aux | (data[ii + jj] & 0xff);
+
+			}
+			colors.insert(aux);
+		}
+
+		return colors.size();
+	}
+
+	bool Load(const std::string& path, RawData*& data, int& width, int& height, int& nChannels)
 	{
 		std::cout << "loading " << path << "\n";
 		data = stbi_load(path.data(), &width, &height, &nChannels, 0);

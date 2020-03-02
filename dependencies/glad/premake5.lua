@@ -19,7 +19,7 @@ project "glad"
     }
     
     filter "system:windows"
-        systemversion "8.1"
+        systemversion "latest"
 
     filter "configurations:Debug"
         runtime "Debug"

@@ -11,6 +11,7 @@
  ***********************************************/
 
  //-Cargar imagen.
+		//- Salvar imagen.
  //	- Mostrar información sobre la imagen : dimensiones, bits por pixel, cantidad única de colores and dpi
  //	(Dots Per Inch).
  //	- Obtener el número de colores únicos que componen la imagen.
@@ -23,15 +24,30 @@
 		- Debe agregar al menos un(1) efecto complejo opcional(e.g., Chromakey, Cuantización, Toon
 			Shading, Embossing o Repujado, Estereografía, Gamma Correction, High Dynamic Range HDR, entre
 			otros).
-		- Salvar imagen.
-		- Las funciones del API deben ser demostradas a través de una aplicación que incorpore escalamiento
-		y rotación libre de la imagen, así como acercamiento y alejamiento(Zoom in / Zoom out).*/
+*/
 
 
 
 namespace ED {
 
-	bool Load(const std::string& path, RawData*& data, int& width, int height, int nChannels);
+	RawData* HistogramToTexture(const std::vector<float> hist, int imgWidth, int imgHeight)
+	{
+		RawData* data = new RawData[imgWidth * imgHeight];
+
+		for (size_t ii = 0; ii < imgHeight; ii++)
+		{
+
+		}
+
+
+		return data;
+	}
+
+	std::vector<float> GetHistogram(RawData* data, unsigned int byteSize, int strideForNextColor, int offsetFrom0, bool normalize = true);
+
+	int NumberOfUniqueColors(RawData* data, unsigned int byteSize, int strideForNextColor);
+
+	bool Load(const std::string& path, RawData*& data, int& width, int& height, int& nChannels);
 
 	bool Save(const std::string& fileName, RawData* data, int width, int height, int nChannels);
 	

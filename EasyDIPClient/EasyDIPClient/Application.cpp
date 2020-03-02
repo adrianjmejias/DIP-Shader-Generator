@@ -66,6 +66,8 @@ Application::Application() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
+
+	quad.reset(new ED::Quad());
 	std::string frag = 
 		"#version 330 core\n"
 		"in vec2 fragPos;\n"
@@ -77,7 +79,18 @@ Application::Application() {
 			"fragColor = vec4(texture(tex,actPos).rgb,1);\n"
 		"}\n";
 
-	basicShader.reset(Shader::FromString(Shader::GetSrcFromFile("bw.vert").c_str(), frag.c_str()));
+
+	std::string vert = "#version 330 core\n"
+		"layout(location = 0) in vec2 pos;\n"
+		"out vec2 fragPos;\n"
+		"uniform mat4 model;\n"
+		"void main()\n"
+		"{\n"
+		"	fragPos = pos;\n"
+		"	gl_Position = model * vec4(fragPos, 0, 1);\n"
+		"}\n";
+
+	basicShader.reset(Shader::FromString(vert.c_str(), frag.c_str()));
 
 
 	ED::EDInit();
@@ -91,6 +104,17 @@ Application::Application() {
 		std::cout << "img load fail\n";
 		return;
 	}
+
+	unsigned int byteSize = imgWidth * imgHeight * nChannels;
+
+	ED::GetHistogram(imgData, byteSize, nChannels, 0);
+	ED::GetHistogram(imgData, byteSize, nChannels, 1);
+	ED::GetHistogram(imgData, byteSize, nChannels, 2);
+
+	ED::NumberOfUniqueColors(imgData, byteSize, nChannels);
+
+
+
 }
 
 Application::~Application() {
@@ -102,6 +126,9 @@ Application::~Application() {
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
+
+
+	delete imgData;
 
 	//delete img;
 	//delete composite;
@@ -144,19 +171,46 @@ void Application::MainLoop()
 
 void Application::Render()
 {
-
-	ED::Quad quad;
 	basicShader->use();
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, texId);
 	basicShader->setInt("tex", 0);
-	quad.Bind();
-	quad.Draw();
+	basicShader->setMat4("model", model);
+	quad->Bind();
+	quad->Draw();
 }
 
 void Application::ImGui()
 {
 	ImGui::Begin("Convolution Editor");
+
+
+
+
+	if (ImGui::SliderFloat2("translation", &translate.x, -2, 2)) {
+		dirty = true;
+	}
+	if (ImGui::SliderFloat2("scale", &scale.x, -2, 2)) {
+		dirty = true;
+	}
+
+	if (ImGui::SliderFloat("rotation", &rot.x, -3.14, 3.14)) {
+		dirty = true;
+	}
+
+
+	if (dirty)
+	{
+		model = glm::rotate(glm::mat4(1), rot.x, glm::vec3(0,0,1));
+		model = glm::scale(model, glm::vec3(scale.x, scale.y, 0));
+		model = glm::translate(model, glm::vec3(translate.x, translate.y, 0));
+		dirty = false;
+	}
+
+
+
+
+
 	// (your selection data could be an index, a pointer to the object, an id for the object, a flag stored in the object itself, etc.)
 	const char* items[] = { 
 		"Negative", "Grey Scale","Black and White", 
@@ -193,17 +247,6 @@ void Application::ImGui()
 	{
 
 		ImGui::Text("Img width %d", imgWidth);
-
-
-		if (ImGui::InputInt("Convolution Height", &heightConv))
-		{
-			heightConv = ED::clamp(7, 1, heightConv);
-		}
-
-		if (ImGui::InputInt("Convolution Width", &widthConv))
-		{
-			widthConv = ED::clamp(7, 1, widthConv);
-		}
 
 		if (ImGui::InputInt("Pivot X", &pivotX))
 		{
@@ -245,21 +288,21 @@ void Application::ImGui()
 		
 		if (IsGlobal)
 		{
-			auto conv = useGPU ? convsGlobalGPU[idxConv] : convsGlobal[idxConv];
-			negative.reset(conv(static_cast<ED::RawData*>(imgData), imgWidth, imgHeight, nChannels));
+			//auto conv = useGPU ? convsGlobalGPU[idxConv] : convsGlobal[idxConv];
+			//negative.reset(conv(static_cast<ED::RawData*>(imgData), imgWidth, imgHeight, nChannels));
 
 		}
 		else if(IsLocal)
 		{
-			auto conv = useGPU ? convsLocalGPU[idxConv -3] : convsLocal[idxConv-3];
-			negative.reset(conv(imgData, imgWidth, imgHeight, nChannels, top, right, bottom, left, pivotX, pivotY));
+			//auto conv = useGPU ? convsLocalGPU[idxConv -3] : convsLocal[idxConv-3];
+			//negative.reset(conv(imgData, imgWidth, imgHeight, nChannels, { }, {}));
 		}
 		else
 		{
-			//negative.reset(ED::ApplyConvolutionHA(img->data, img->GetWidth(), img->GetHeight(), img->GetNChannels()));
+			//negative.reset(ED::ApplyConvolutionHA(imgData, imgWidth, imgHeight, nChannels));
 		}
 
-		texId = ED::GetTexture(negative.get(), imgWidth, imgHeight);
+		texId = ED::GetTexture(imgData, imgWidth, imgHeight);
 	}
 
 

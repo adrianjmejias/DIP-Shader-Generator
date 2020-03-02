@@ -21,6 +21,10 @@
 
 namespace ED {
 
+
+	using Padding = std::tuple<int, int, int, int>;
+	using Pivot = std::tuple<int,int>;
+
 	using RawData = unsigned char;
 
 	#define PARAMS_GLOBAL RawData* data, unsigned int width, unsigned int height, unsigned int nChannels

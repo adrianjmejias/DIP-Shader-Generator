@@ -16,34 +16,34 @@ namespace ED {
 	std::unique_ptr<Shader> median;
 	std::unique_ptr<Shader> laplaceGauss;
 
-	RawData* ApplySobelHA(PARAMS_LOCAL) {
+	//RawData* ApplySobelHA(PARAMS_LOCAL) {
 
-		//auto [convX, newWidth, newHeight] = ReduceConvolution(sobelX, 7, 7, top, right, bottom, left);
-		//auto [convY, newWidth, newHeight] = ReduceConvolution(sobelY, 7, 7, top, right, bottom, left);
+	//	//auto [convX, newWidth, newHeight] = ReduceConvolution(sobelX, 7, 7, top, right, bottom, left);
+	//	//auto [convY, newWidth, newHeight] = ReduceConvolution(sobelY, 7, 7, top, right, bottom, left);
 
-				std::string sobel = BuildShaderConv(
-					BuildConvolution(convX, "conv") +
-					//BuildConvolution({0,0,0,0,0,0,0,0,0,1}, "disp") +
-					"vec3 avgX = vec3(0);\n",
+	//			std::string sobel = BuildShaderConv(
+	//				BuildConvolution(convX, "conv") +
+	//				//BuildConvolution({0,0,0,0,0,0,0,0,0,1}, "disp") +
+	//				"vec3 avgX = vec3(0);\n",
 
-					+ UseForConv(width, height, pivotX, pivotY,
-						"
-							"vec3 color = texture(tex, nUv).rgb;\n"
-							"avgX +=  color * conv[convI];\n",			
-						) +
+	//				+ UseForConv(width, height, pivotX, pivotY,
+	//					"
+	//						"vec3 color = texture(tex, nUv).rgb;\n"
+	//						"avgX +=  color * conv[convI];\n",			
+	//					) +
 
-					"fragColor = vec4(avgX, 1);\n",
-					UseGradient(),
-					);
-
-
-				sobelShader.reset(Shader::FromString(vert.c_str(), sobel.c_str()));
+	//				"fragColor = vec4(avgX, 1);\n",
+	//				UseGradient(),
+	//				);
 
 
+	//			sobelShader.reset(Shader::FromString(vert.c_str(), sobel.c_str()));
 
 
-		return ApplyConvolutionHA(data, imgWidth, imgHeight7, nChannels, *sobelShader);
-	}
+
+
+	//	return ApplyConvolutionHA(data, imgWidth, imgHeight7, nChannels, *sobelShader);
+	//}
 
 	RawData* ApplyNegativeHA(PARAMS_GLOBAL) {
 		return ApplyConvolutionHA(data, width, height, nChannels, *negativeShader);
@@ -90,8 +90,8 @@ namespace ED {
 		glBindTexture(GL_TEXTURE_2D, texture);
 
 		s.setInt("tex", 0);
-		s.setFloat("imgWidth", imgWidth);
-		s.setFloat("imgHeight", imgHeight);
+		s.setFloat("imgWidth", static_cast<float>(imgWidth));
+		s.setFloat("imgHeight", static_cast<float>(imgHeight));
 
 		quad->Bind();
 		quad->Draw();
