@@ -107,11 +107,13 @@ Application::Application() {
 
 	unsigned int byteSize = imgWidth * imgHeight * nChannels;
 
-	ED::GetHistogram(imgData, byteSize, nChannels, 0);
-	ED::GetHistogram(imgData, byteSize, nChannels, 1);
-	ED::GetHistogram(imgData, byteSize, nChannels, 2);
 
-	ED::NumberOfUniqueColors(imgData, byteSize, nChannels);
+	sobel.LoadFromFile("gausslaplace.txt");
+	//ED::GetHistogram(imgData, byteSize, nChannels, 0);
+	//ED::GetHistogram(imgData, byteSize, nChannels, 1);
+	//ED::GetHistogram(imgData, byteSize, nChannels, 2);
+
+	//ED::NumberOfUniqueColors(imgData, byteSize, nChannels);
 
 
 
@@ -259,7 +261,7 @@ void Application::ImGui()
 		}
 	}
 
-	static ED::ConvMeta c;
+	static ED::Kernel c;
 	if (ImGui::InputInt("Convolution Height", &c.width))
 	{
 		c.width = ED::clamp(7, 1, c.width);
@@ -312,7 +314,7 @@ void Application::ImGui()
 		else if(IsLocal)
 		{
 			auto conv = useGPU ? convsLocalGPU[idxConv] : convsLocal[idxConv];
-			negative.reset(conv(imgData, imgWidth, imgHeight, nChannels, meta[idxConv]));
+			//negative.reset(conv(imgData, imgWidth, imgHeight, nChannels, meta[idxConv]));
 		}
 		else
 		{

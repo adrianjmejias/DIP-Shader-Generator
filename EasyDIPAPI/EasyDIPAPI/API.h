@@ -30,18 +30,7 @@
 
 namespace ED {
 
-	RawData* HistogramToTexture(const std::vector<float> hist, int imgWidth, int imgHeight)
-	{
-		RawData* data = new RawData[imgWidth * imgHeight];
-
-		for (size_t ii = 0; ii < imgHeight; ii++)
-		{
-
-		}
-
-
-		return data;
-	}
+	RawData* HistogramToTexture(const std::vector<float> hist, int imgWidth, int imgHeight);
 
 	std::vector<float> GetHistogram(RawData* data, unsigned int byteSize, int strideForNextColor, int offsetFrom0, bool normalize = true);
 

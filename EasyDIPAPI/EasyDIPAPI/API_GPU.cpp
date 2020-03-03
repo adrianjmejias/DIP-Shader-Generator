@@ -16,38 +16,38 @@ namespace ED {
 	std::unique_ptr<Shader> median;
 	std::unique_ptr<Shader> laplaceGauss;
 
-	//RawData* ApplySobelHA(PARAMS_LOCAL) {
+	RawData* ApplySobelHA(PARAMS_LOCAL) {
 
-		auto [convX, newWidthX, newHeightX] = ReduceConvolution(sobelX, meta[0]);
-		auto [convY, newWidthY, newHeightY] = ReduceConvolution(sobelY, meta[1]);
+		//auto [convX, newWidthX, newHeightX] = ReduceConvolution(sobelX, meta[0]);
+		//auto [convY, newWidthY, newHeightY] = ReduceConvolution(sobelY, meta[1]);
 
-				std::string sobel = BuildShaderConv(
-					//uniforms
-					UseGradient(),
-					// before
-					BuildConvolution(convX, "convX") +
-					BuildConvolution(convY, "convY") +
-					"vec3 avgX = vec3(0);\n",
-					// op
-					UseForConv(meta[0],
-							"vec3 color = texture(tex, nUv).rgb;\n"
-							"avgX +=  color * conv[convI];\n"			
-						) +
-					UseForConv(meta[1],
-						"vec3 color = texture(tex, nUv).rgb;\n"
-						"avgX +=  color * conv[convI];\n"
-						),
-					// after
-					"fragColor = vec4(avgX, 1);\n"
-				);
-
-
-	//			sobelShader.reset(Shader::FromString(vert.c_str(), sobel.c_str()));
+		//		std::string sobel = BuildShaderConv(
+		//			uniforms
+		//			UseGradient(),
+		//			 before
+		//			BuildConvolution(convX, "convX") +
+		//			BuildConvolution(convY, "convY") +
+		//			"vec3 avgX = vec3(0);\n",
+		//			 op
+		//			UseForConv(meta[0],
+		//					"vec3 color = texture(tex, nUv).rgb;\n"
+		//					"avgX +=  color * conv[convI];\n"			
+		//				) +
+		//			UseForConv(meta[1],
+		//				"vec3 color = texture(tex, nUv).rgb;\n"
+		//				"avgX +=  color * conv[convI];\n"
+		//				),
+		//			 after
+		//			"fragColor = vec4(avgX, 1);\n"
+		//		);
 
 
+		//		sobelShader.reset(Shader::FromString(vert.c_str(), sobel.c_str()));
 
 
-		return ApplyConvolutionHA(data, imgWidth, imgHeight, nChannels, *sobelShader);
+
+
+				return nullptr;// ApplyConvolutionHA(data, imgWidth, imgHeight, nChannels, *sobelShader);
 	}
 
 	RawData* ApplyNegativeHA(PARAMS_GLOBAL) {

@@ -21,9 +21,9 @@ class Application
 	int nChannels;
 	bool useGPU = true;
 
-
-	std::vector<ED::ConvMetaList> metaGlobal;
-	GlobalConvList convsGlobal = {
+	ED::Sobel sobel;
+	
+	//GlobalConvList convsGlobal;
 	int nLocalConv = 0;
 	int nGlobalConv = 0;
 	bool dirty = true;
@@ -38,7 +38,7 @@ class Application
 	std::vector<std::vector< ED::Pivot > > pivots;
 
 
-	ED::GlobalConv convsGlobal[3] = {
+	std::vector<ED::GlobalConv> convsGlobal = {
 		ED::ApplyNegative,
 		//ED::ApplyGrey,
 		//ED::ApplyBW,

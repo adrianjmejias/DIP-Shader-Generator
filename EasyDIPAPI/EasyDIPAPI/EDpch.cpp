@@ -96,7 +96,7 @@ namespace ED
 	}
 
 
-	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, const ConvMeta m)
+	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, const Kernel m)
 	{
 		return ReduceConvolution(fullConv, m.width, m.height, m.pTop, m.pRight, m.pBot, m.pLeft);
 	}
@@ -134,7 +134,7 @@ namespace ED
 		return { reducedConv, newWidth, newHeight };
 	}
 
-	std::string UseForConv(const ConvMeta& m, const std::string &op) {
+	std::string UseForConv(const Kernel& m, const std::string &op) {
 		return UseForConv(m.width, m.height, m.pivotX, m.pivotY, op);
 	}
 
@@ -345,6 +345,69 @@ namespace ED
 			}
 		}
 		return out;
+	}
+
+	bool Kernel::LoadFromFile(const std::string& path)
+	{
+		std::ifstream file(path);
+
+		if (file.is_open())
+		{
+			std::string line;
+			std::string token;
+			bool normalize;
+
+
+			std::getline(file, line);
+			std::stringstream liness(line);
+
+
+			liness >> width;
+			liness >> height;
+			liness >> pivotX;
+			liness >> pivotY;
+
+			if (!liness.eof())
+			{
+				liness >> token;
+				normalize = (token.length() == 1) && (std::tolower(token[0]) == 'n');
+			}
+
+			float input;
+			for (int ii = width * height-1; ii >= 0; ii--)
+			{
+				if (file.eof())
+				{
+					throw "malformed kernel";
+					__debugbreak();
+					return false;
+				}
+				file >> input;
+				values.push_back(input);
+			}
+
+			// 
+			/*
+			7 7 3 3 N
+			0, -3, -7, -9, -7, -3, 0,
+			-3, -16, -23, -18, -23, -16, -3,
+			-7, -23, 11, 65, 11, -23, -7,
+			-9, -18, 65, 167, 65, -18, -9,
+			-7, -23, 11, 65, 11, -23, -7,
+			-3, -16, -23, -18, -23, -16, -3,
+			0, -3, -7, -9, -7, -3, 0
+			*/
+
+
+
+		}
+		else {
+			std::cout << "couldn't open file \n";
+		}
+
+		file.close();
+			
+		return true;
 	}
 
 }

@@ -3,12 +3,7 @@
 
 namespace ED {
 
-	class Sobel {
-		//int threshhold;
-		void operator()() {
 
-		}
-	};
 
 	RawData* ApplySobel(PARAMS_LOCAL) {
 
