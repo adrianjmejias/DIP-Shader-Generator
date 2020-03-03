@@ -15,6 +15,7 @@
 #include <functional>
 #include <glad/glad.h>
 #include <filesystem>
+#include <cctype>
 #include <cmath>
 #include "Quad.h"
 #include "shaders/Shader.h"
@@ -35,39 +36,12 @@ namespace ED {
 		int width, height;
 	};
 
-	struct Kernel {
-	public:
-		int pivotX;
-		int pivotY;
-		int pTop, pBot, pLeft, pRight;
-		int width, height;
-		std::vector<float> values;
-
-		bool LoadFromFile(const std::string& path);
-	};
-
-	class Convolution : public Kernel
-	{
-	public:
-	};
-
-	class LocalConvolution : public Convolution
-	{
-
-	};
-
-	class GlobalConvolution 
-	{
-
-	};
 
 
-	class Sobel : public LocalConvolution
-	{
 
-	};
 
-	using ConvMetaList = std::vector<Kernel>;
+
+	//using ConvMetaList = std::vector<Kernel>;
 
 	#define PARAMS_GLOBAL RawData* data, unsigned int width, unsigned int height, unsigned int nChannels
 
@@ -111,10 +85,10 @@ namespace ED {
 	}
 
 	std::string UseForConv(int convWidth, int convHeight, const Pivot &pi, const std::string &op);
-	std::string UseForConv(const Kernel& m, const std::string &op);
+	//std::string UseForConv(const Kernel& m, const std::string &op);
 	std::string UseForConv(int convWidth, int convHeight, int pivotX, int pivotY, const std::string &op);
 
-	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, const Kernel m);
+	//std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, const Kernel m);
 	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(std::vector<float> fullConv, unsigned int actWidth, unsigned int actHeight, int top, int right, int bottom, int left);
 	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, unsigned int actWidth, unsigned int actHeight, const Padding &p);
 

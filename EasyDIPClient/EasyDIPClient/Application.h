@@ -38,39 +38,39 @@ class Application
 	std::vector<std::vector< ED::Pivot > > pivots;
 
 
-	std::vector<ED::GlobalConv> convsGlobal = {
-		ED::ApplyNegative,
-		//ED::ApplyGrey,
-		//ED::ApplyBW,
-	};
+	//std::vector<ED::GlobalConv> convsGlobal = {
+	//	ED::ApplyNegative,
+	//	//ED::ApplyGrey,
+	//	//ED::ApplyBW,
+	//};
 
-	std::vector<ED::ConvMetaList> metaGlobalHA;
-	GlobalConvList convsGlobalGPU = {
-		ED::ApplyNegativeHA,
-		//ED::ApplyGreyHA,
-		//ED::ApplyBWHA,
-	};
+	//std::vector<ED::ConvMetaList> metaGlobalHA;
+	//GlobalConvList convsGlobalGPU = {
+	//	ED::ApplyNegativeHA,
+	//	//ED::ApplyGreyHA,
+	//	//ED::ApplyBWHA,
+	//};
 
-	std::vector<ED::ConvMetaList> metaLocal;
-	LocalConvList convsLocal = {
-		ED::ApplySobel,
-		//ED::ApplyRoberts,
-		//ED::ApplyPrewitt,
+	//std::vector<ED::ConvMetaList> metaLocal;
+	//LocalConvList convsLocal = {
+	//	ED::ApplySobel,
+	//	//ED::ApplyRoberts,
+	//	//ED::ApplyPrewitt,
 
-		//ED::ApplyBox,
-		//ED::ApplyMedian,
-		//ED::ApplyLaplaceGauss,
-	};
-	std::vector<ED::ConvMetaList> metaLocalHA;
-	LocalConvList convsLocalGPU = {
-		ED::ApplySobel,
-		//ED::ApplyRoberts,
-		//ED::ApplyPrewitt,
+	//	//ED::ApplyBox,
+	//	//ED::ApplyMedian,
+	//	//ED::ApplyLaplaceGauss,
+	//};
+	//std::vector<ED::ConvMetaList> metaLocalHA;
+	//LocalConvList convsLocalGPU = {
+	//	ED::ApplySobel,
+	//	//ED::ApplyRoberts,
+	//	//ED::ApplyPrewitt,
 
-		//ED::ApplyBoxHA,
-		//ED::ApplyMedian,
-		//ED::ApplyLaplaceGauss,
-	};
+	//	//ED::ApplyBoxHA,
+	//	//ED::ApplyMedian,
+	//	//ED::ApplyLaplaceGauss,
+	//};
 
 	GLFWwindow *window;
 

@@ -12,6 +12,8 @@
     <ClInclude Include="EasyDIPAPI\Convolutions.h" />
     <ClInclude Include="EasyDIPAPI\EDImage.h" />
     <ClInclude Include="EasyDIPAPI\EDpch.h" />
+    <ClInclude Include="EasyDIPAPI\Filter.h" />
+    <ClInclude Include="EasyDIPAPI\Kernel.h" />
     <ClInclude Include="EasyDIPAPI\Quad.h" />
     <ClInclude Include="EasyDIPAPI\shaders\Shader.h">
       <Filter>shaders</Filter>
@@ -24,6 +26,8 @@
     <ClCompile Include="EasyDIPAPI\Convolutions.cpp" />
     <ClCompile Include="EasyDIPAPI\EDImage.cpp" />
     <ClCompile Include="EasyDIPAPI\EDpch.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filter.cpp" />
+    <ClCompile Include="EasyDIPAPI\Kernel.cpp" />
     <ClCompile Include="EasyDIPAPI\Quad.cpp" />
     <ClCompile Include="EasyDIPAPI\shaders\Shader.cpp">
       <Filter>shaders</Filter>

@@ -108,7 +108,7 @@ Application::Application() {
 	unsigned int byteSize = imgWidth * imgHeight * nChannels;
 
 
-	sobel.LoadFromFile("gausslaplace.txt");
+	sobel.LoadFromFile("sobel.txt");
 	//ED::GetHistogram(imgData, byteSize, nChannels, 0);
 	//ED::GetHistogram(imgData, byteSize, nChannels, 1);
 	//ED::GetHistogram(imgData, byteSize, nChannels, 2);
@@ -247,83 +247,93 @@ void Application::ImGui()
 	ImGui::Checkbox("Use GPU", &useGPU);
 
 
-	bool IsGlobal = idxConv <= convsGlobal.size();
-	bool IsLocal = !IsGlobal && idxConv != 10;
+	//bool IsGlobal = idxConv <= convsGlobal.size();
+	//bool IsLocal = !IsGlobal && idxConv != 10;
 
-	auto meta = useGPU ? metaLocalHA : metaLocal;
-	if (!IsGlobal)
+	//auto meta = useGPU ? metaLocalHA : metaLocal;
+	//if (!IsGlobal)
+	//{
+	//	idxConv -= convsLocal.size();
+
+	//	for (auto &c : meta[idxConv])
+	//	{
+
+	//	}
+	//}
+
+	//static ED::Kernel c;
+	//if (ImGui::InputInt("Convolution Height", &c.width))
+	//{
+	//	c.width = ED::clamp(7, 1, c.width);
+	//}
+
+	//if (ImGui::InputInt("Convolution Width", &c.height))
+	//{
+	//	c.height = ED::clamp(7, 1, c.height);
+	//}
+
+	//if (ImGui::InputInt("Pivot X", &c.pivotX))
+	//{
+	//	c.pivotX = ED::clamp(c.width-1, 0, c.pivotX);
+	//}
+
+	//if (ImGui::InputInt("Pivot Y", &c.pivotY))
+	//{
+	//	c.pivotY = ED::clamp(c.height - 1, 1, c.pivotY);
+	//}
+	//if (ImGui::InputInt("padding top", &c.pTop))
+	//{
+	//	//pivotY = clamp(heightConv - 1, 1, top);
+	//}
+
+	//if (ImGui::InputInt("padding right", &c.pRight))
+	//{
+	//	//pivotY = clamp(heightConv - 1, 1, top);
+	//}
+
+	//if (ImGui::InputInt("padding bottom", &c.pBot))
+	//{
+	//	//pivotY = clamp(heightConv - 1, 1, top);
+	//}
+
+	//if (ImGui::InputInt("padding left", &c.pLeft))
+	//{
+	//	//pivotY = clamp(heightConv - 1, 1, top);
+	//}
+
+	//if (ImGui::Button("Apply convolution"))
+	//{
+	//	std::unique_ptr<ED::RawData> negative;
+	//	
+	//	if (IsGlobal)
+	//	{
+	//		//auto conv = useGPU ? convsGlobalGPU[idxConv] : convsGlobal[idxConv];
+	//		//negative.reset(conv(static_cast<ED::RawData*>(imgData), imgWidth, imgHeight, nChannels));
+
+	//	}
+	//	else if(IsLocal)
+	//	{
+	//		auto conv = useGPU ? convsLocalGPU[idxConv] : convsLocal[idxConv];
+	//		//negative.reset(conv(imgData, imgWidth, imgHeight, nChannels, meta[idxConv]));
+	//	}
+	//	else
+	//	{
+	//		//negative.reset(ED::ApplyConvolutionHA(imgData, imgWidth, imgHeight, nChannels));
+	//	}
+
+	//	texId = ED::GetTexture(imgData, imgWidth, imgHeight);
+	//}
+
+
+	if (ImGui::Button("Apply sobel"))
 	{
-		idxConv -= convsLocal.size();
+		std::unique_ptr<ED::RawData> img;
 
-		for (auto &c : meta[idxConv])
-		{
-
-		}
-	}
-
-	static ED::Kernel c;
-	if (ImGui::InputInt("Convolution Height", &c.width))
-	{
-		c.width = ED::clamp(7, 1, c.width);
-	}
-
-	if (ImGui::InputInt("Convolution Width", &c.height))
-	{
-		c.height = ED::clamp(7, 1, c.height);
-	}
-
-	if (ImGui::InputInt("Pivot X", &c.pivotX))
-	{
-		c.pivotX = ED::clamp(c.width-1, 0, c.pivotX);
-	}
-
-	if (ImGui::InputInt("Pivot Y", &c.pivotY))
-	{
-		c.pivotY = ED::clamp(c.height - 1, 1, c.pivotY);
-	}
-	if (ImGui::InputInt("padding top", &c.pTop))
-	{
-		//pivotY = clamp(heightConv - 1, 1, top);
-	}
-
-	if (ImGui::InputInt("padding right", &c.pRight))
-	{
-		//pivotY = clamp(heightConv - 1, 1, top);
-	}
-
-	if (ImGui::InputInt("padding bottom", &c.pBot))
-	{
-		//pivotY = clamp(heightConv - 1, 1, top);
-	}
-
-	if (ImGui::InputInt("padding left", &c.pLeft))
-	{
-		//pivotY = clamp(heightConv - 1, 1, top);
-	}
-
-	if (ImGui::Button("Apply convolution"))
-	{
-		std::unique_ptr<ED::RawData> negative;
 		
-		if (IsGlobal)
-		{
-			//auto conv = useGPU ? convsGlobalGPU[idxConv] : convsGlobal[idxConv];
-			//negative.reset(conv(static_cast<ED::RawData*>(imgData), imgWidth, imgHeight, nChannels));
-
-		}
-		else if(IsLocal)
-		{
-			auto conv = useGPU ? convsLocalGPU[idxConv] : convsLocal[idxConv];
-			//negative.reset(conv(imgData, imgWidth, imgHeight, nChannels, meta[idxConv]));
-		}
-		else
-		{
-			//negative.reset(ED::ApplyConvolutionHA(imgData, imgWidth, imgHeight, nChannels));
-		}
+		img.reset(sobel.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
 
 		texId = ED::GetTexture(imgData, imgWidth, imgHeight);
 	}
-
 
 
 
