@@ -2,6 +2,12 @@
 
 
 
+void Application::TranslateImage(float x, float y)
+{
+	dirty = true;
+	translate.x = x;
+	translate.y = y;
+}
 
 Application::Application() {
 
@@ -108,7 +114,10 @@ Application::Application() {
 	unsigned int byteSize = imgWidth * imgHeight * nChannels;
 
 
-	sobel.LoadFromFile("sobel.txt");
+	sobel.LoadFromFile("filters/sobel.txt");
+	box.LoadFromFile("filters/box.txt");
+	median.LoadFromFile("filters/median.txt");
+	prewitt.LoadFromFile("filters/prewitt.txt");
 	//ED::GetHistogram(imgData, byteSize, nChannels, 0);
 	//ED::GetHistogram(imgData, byteSize, nChannels, 1);
 	//ED::GetHistogram(imgData, byteSize, nChannels, 2);
@@ -158,14 +167,12 @@ void Application::MainLoop()
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
 
-		ImGui();
 
-		// Rendering
-		ImGui::Render();
+
 		Render();
 
+		ImGui();
 
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(window);
 	}
@@ -186,13 +193,30 @@ void Application::ImGui()
 {
 	ImGui::Begin("Convolution Editor");
 
+	auto io= ImGui::GetIO();
 
 
+	ImGui::Text("fps %f", io.Framerate);
 
-	if (ImGui::SliderFloat2("translation", &translate.x, -2, 2)) {
+
+	if (ImGui::SliderFloat2("scale", &scale.x, -2, 2)) {
 		dirty = true;
 	}
-	if (ImGui::SliderFloat2("scale", &scale.x, -2, 2)) {
+
+	//if (io.MouseDown[0])
+	//{
+	//	TranslateImage((translate.x + io.MouseDelta.x)  * io.DeltaTime, (translate.y + io.MouseDelta.y) * io.DeltaTime);
+	//}
+
+	if (ImGui::SliderFloat2("translation", &translate.x, -2, 2)){
+		//TranslateImage(translate.x, translate.y);
+		dirty = true;
+	}
+	
+	static float scaleBoth = 1;
+	if (ImGui::SliderFloat("scale both", &scaleBoth, -2, 2)) {
+		scale.y = scaleBoth;
+		scale.x = scaleBoth;
 		dirty = true;
 	}
 
@@ -208,9 +232,6 @@ void Application::ImGui()
 		model = glm::translate(model, glm::vec3(translate.x, translate.y, 0));
 		dirty = false;
 	}
-
-
-
 
 
 	// (your selection data could be an index, a pointer to the object, an id for the object, a flag stored in the object itself, etc.)
@@ -247,95 +268,191 @@ void Application::ImGui()
 	ImGui::Checkbox("Use GPU", &useGPU);
 
 
-	//bool IsGlobal = idxConv <= convsGlobal.size();
-	//bool IsLocal = !IsGlobal && idxConv != 10;
+	
 
-	//auto meta = useGPU ? metaLocalHA : metaLocal;
-	//if (!IsGlobal)
-	//{
-	//	idxConv -= convsLocal.size();
+	if (ImGuiSobel(sobel))
+	{
+		std::unique_ptr<ED::RawData> img;
 
-	//	for (auto &c : meta[idxConv])
-	//	{
+		img.reset(sobel.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
 
-	//	}
-	//}
-
-	//static ED::Kernel c;
-	//if (ImGui::InputInt("Convolution Height", &c.width))
-	//{
-	//	c.width = ED::clamp(7, 1, c.width);
-	//}
-
-	//if (ImGui::InputInt("Convolution Width", &c.height))
-	//{
-	//	c.height = ED::clamp(7, 1, c.height);
-	//}
-
-	//if (ImGui::InputInt("Pivot X", &c.pivotX))
-	//{
-	//	c.pivotX = ED::clamp(c.width-1, 0, c.pivotX);
-	//}
-
-	//if (ImGui::InputInt("Pivot Y", &c.pivotY))
-	//{
-	//	c.pivotY = ED::clamp(c.height - 1, 1, c.pivotY);
-	//}
-	//if (ImGui::InputInt("padding top", &c.pTop))
-	//{
-	//	//pivotY = clamp(heightConv - 1, 1, top);
-	//}
-
-	//if (ImGui::InputInt("padding right", &c.pRight))
-	//{
-	//	//pivotY = clamp(heightConv - 1, 1, top);
-	//}
-
-	//if (ImGui::InputInt("padding bottom", &c.pBot))
-	//{
-	//	//pivotY = clamp(heightConv - 1, 1, top);
-	//}
-
-	//if (ImGui::InputInt("padding left", &c.pLeft))
-	//{
-	//	//pivotY = clamp(heightConv - 1, 1, top);
-	//}
-
-	//if (ImGui::Button("Apply convolution"))
-	//{
-	//	std::unique_ptr<ED::RawData> negative;
-	//	
-	//	if (IsGlobal)
-	//	{
-	//		//auto conv = useGPU ? convsGlobalGPU[idxConv] : convsGlobal[idxConv];
-	//		//negative.reset(conv(static_cast<ED::RawData*>(imgData), imgWidth, imgHeight, nChannels));
-
-	//	}
-	//	else if(IsLocal)
-	//	{
-	//		auto conv = useGPU ? convsLocalGPU[idxConv] : convsLocal[idxConv];
-	//		//negative.reset(conv(imgData, imgWidth, imgHeight, nChannels, meta[idxConv]));
-	//	}
-	//	else
-	//	{
-	//		//negative.reset(ED::ApplyConvolutionHA(imgData, imgWidth, imgHeight, nChannels));
-	//	}
-
-	//	texId = ED::GetTexture(imgData, imgWidth, imgHeight);
-	//}
-
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
 
 	if (ImGui::Button("Apply sobel"))
 	{
 		std::unique_ptr<ED::RawData> img;
 
-		
-		img.reset(sobel.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
+		if (useGPU)
+		{
+			img.reset(sobel.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
 
-		texId = ED::GetTexture(imgData, imgWidth, imgHeight);
+		}
+		else {
+			img.reset(sobel.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
+
+		}
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
 	}
 
 
+	if (ImGui::SliderFloat("embossing rot", &embossing.rot[0], -3.14, 3.14))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(embossing.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::SliderFloat("embossing distance", &embossing.distance, -10, 10))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(embossing.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::Button("apply embossing"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(embossing.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+
+	if (ImGui::Button("apply toon"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(toon.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+
+	if (ImGui::SliderFloat("bw threshold", &bw.threshold, 0, 255))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(bw.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+
+	if (ImGui::Button("apply bw cpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(bw.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::Button("apply box cpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(box.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::Button("apply box gpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+		img.reset(box.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+
+	if (ImGui::Button("apply grey cpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(grey.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::Button("apply grey gpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+		img.reset(grey.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+
+	if (ImGui::Button("apply median cpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(median.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::Button("apply median gpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+		img.reset(median.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+
+	if (ImGui::Button("apply negative cpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(negative.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::Button("apply negative gpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+		img.reset(negative.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::Button("apply prewitt cpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+
+		img.reset(prewitt.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::Button("apply prewitt gpu"))
+	{
+		std::unique_ptr<ED::RawData> img;
+
+		img.reset(prewitt.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
 
 	//if (ImGui::Button("Save Image"))
 	//{
@@ -361,6 +478,9 @@ void Application::ImGui()
 
 	ImGui::End();
 
+	// Rendering
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void Application::HelpMarker(const char* desc)

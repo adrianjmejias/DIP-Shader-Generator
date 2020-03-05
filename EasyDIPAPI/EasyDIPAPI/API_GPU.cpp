@@ -50,67 +50,8 @@ namespace ED {
 				return nullptr;// ApplyConvolutionHA(data, imgWidth, imgHeight, nChannels, *sobelShader);
 	}
 
-	RawData* ApplyNegativeHA(PARAMS_GLOBAL) {
-		return ApplyConvolutionHA(data, width, height, nChannels, *negativeShader);
-	}
 
-	RawData* ApplyConvolutionHA(RawData* data, unsigned int imgWidth, unsigned int imgHeight, unsigned int nChannels, Shader& s)
-	{
-		// The texture we're going to render to
-		GLint m_viewport[4];
 
-		glGetIntegerv(GL_VIEWPORT, m_viewport);
-
-		std::cout << "viewport" << std::endl;
-
-		//for (int ii = 0; ii < 4; ii++)
-		//{
-		//	std::cout << m_viewport[ii] << std::endl;
-		//}
-
-		GLuint renderedTexture = GetTexture(nullptr, imgWidth, imgHeight);
-
-		GLuint FramebufferName = 0;
-		glGenFramebuffers(1, &FramebufferName);
-		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderedTexture, 0);
-		GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
-
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-			__debugbreak();
-		}
-		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
-		glViewport(0, 0, imgWidth, imgHeight);
-		glDrawBuffers(1, DrawBuffers); // "1" is the size of DrawBuffers
-									   //PreApplyConvolution(tex);
-		RawData* out;
-		unsigned int texture;
-		texture = GetTexture(data, imgWidth, imgHeight);
-
-		// tratar de hacer que el user pase el out que quiera usar
-		out = new RawData[(imgWidth * imgHeight) * nChannels];
-
-		s.use();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
-
-		s.setInt("tex", 0);
-		s.setFloat("imgWidth", static_cast<float>(imgWidth));
-		s.setFloat("imgHeight", static_cast<float>(imgHeight));
-
-		quad->Bind();
-		quad->Draw();
-
-		glBindTexture(GL_TEXTURE_2D, renderedTexture);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, out);
-		glDeleteTextures(1, &texture);
-		glDeleteTextures(1, &renderedTexture);
-
-		glViewport(0, 0, m_viewport[2], m_viewport[3]);
-		return out;
-	}
 
 	bool EDInitGPU()
 	{

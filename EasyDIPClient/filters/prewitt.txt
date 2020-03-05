@@ -1,0 +1,2 @@
+filters/kernels/prewittX.txt 0 0 0 0 3 3
+filters/kernels/prewittY.txt 0 0 0 0 3 3

@@ -5,7 +5,7 @@ namespace ED {
 
 	RawData* ApplySobelHA(PARAMS_LOCAL);
 	RawData* ApplyNegativeHA(PARAMS_GLOBAL);
-	RawData* ApplyConvolutionHA(RawData* data, unsigned int imgWidth, unsigned int imgHeight, unsigned int nChannels, Shader& s);
+
 
 
 	RawData* ApplyGreyHA(RawData* data, unsigned int, unsigned int, unsigned int);

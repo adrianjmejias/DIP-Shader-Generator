@@ -3,16 +3,10 @@
 
 namespace ED {
 
-
-
-
-
 	//RawData* ApplyGreyHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
 	//	return ApplyConvolutionHA(data, width, height, nChannels, *greyShader);
 	//}
-	//RawData* ApplyBWHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
-	//	return ApplyConvolutionHA(data, width, height, nChannels, *bwShader);
-	//}
+
 	//RawData* ApplyNegativeHA(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
 	//	return ApplyConvolutionHA(data, width, height, nChannels, *negativeShader);
 	//}
@@ -72,16 +66,7 @@ namespace ED {
 		});
 	}
 
-	RawData* ApplyBW(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels) {
-		return ForEachPixel(data, width, height, nChannels, [](RawData* dest, RawData* src) {
-			float c = src[0] * 0.2125f + src[1] * 0.7154f + src[2] * 0.0721f;
-			c = (c > 0.6) ? 1 : 0;
 
-			dest[0] = c;
-			dest[1] = c;
-			dest[2] = c;
-		});
-	}
 
 	RawData* ApplyRoberts(RawData* data, unsigned int width, unsigned int height, int nChannels,
 		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY) {
@@ -189,37 +174,37 @@ namespace ED {
 	RawData* ApplyMedian(RawData* data, unsigned int width, unsigned int height, int nChannels,
 		unsigned int convWidth, unsigned int convHeight, unsigned int pivotX, unsigned int pivotY) {
 
-		float* md[4];
-		int sz = 7 * 7;
-		int actSz;
+			float* md[4];
+			int sz = 7 * 7;
+			int actSz;
 
-		{
-			int bsz = sizeof(float) * sz;
-			md[0] = (float*)alloca(bsz);
-			md[1] = (float*)alloca(bsz);
-			md[2] = (float*)alloca(bsz);
-			md[3] = (float*)alloca(bsz);
-		}
+			{
+				int bsz = sizeof(float) * sz;
+				md[0] = (float*)alloca(bsz);
+				md[1] = (float*)alloca(bsz);
+				md[2] = (float*)alloca(bsz);
+				md[3] = (float*)alloca(bsz);
+			}
 
-		return ForEachConvolution(data, width, height, nChannels, 7, 7, 3, 3,
-			[&]() {
-			actSz = 0;
-		},
-			[&](RawData* src, int ix, int iy, int ic) {
-			for (int ii = 0; ii < nChannels; ii++)
-			{
-				md[ii][ic] = src[ii];
+			return ForEachConvolution(data, width, height, nChannels, 7, 7, 3, 3,
+				[&]() {
+				actSz = 0;
+			},
+				[&](RawData* src, int ix, int iy, int ic) {
+				for (int ii = 0; ii < nChannels; ii++)
+				{
+					md[ii][ic] = src[ii];
+				}
+				actSz++;
+			},
+				[&](RawData* dest) {
+				for (int ii = 0; ii < nChannels; ii++)
+				{
+					std::sort(&md[ii][0], &md[ii][actSz]);
+					dest[ii] = clamp(255, 0, md[ii][actSz / 2]);
+				}
 			}
-			actSz++;
-		},
-			[&](RawData* dest) {
-			for (int ii = 0; ii < nChannels; ii++)
-			{
-				std::sort(&md[ii][0], &md[ii][actSz]);
-				dest[ii] = clamp(255, 0, md[ii][actSz / 2]);
-			}
-		}
-		);
+			);
 
 	}
 	RawData* ApplyLaplaceGauss(RawData* data, unsigned int width, unsigned int height, int nChannels,
@@ -323,7 +308,7 @@ namespace ED {
 	bool EDInit()
 	{
 
-		EDInitGPU();
+		//EDInitGPU();
 		
 		//std::cout << "sobel shader" << std::endl;
 
@@ -373,25 +358,7 @@ namespace ED {
 
 
 
-		//std::string sobel = BuildShaderConv(
-		//	"float convY[9] = float[](\n"
-		//	"-1.f, -1.f, -1.f,\n"
-		//	"0.f, 0.f, 0.f,\n"
-		//	"1.f, 1.f, 1.f\n"
-		//	");\n"
-		//	"float convX[9] = float[](\n"
-		//	"-1.f, 0.f, 1.f,\n"
-		//	"-1.f, 0.f, 1.f,\n"
-		//	"-1.f, 0.f, 1.f\n"
-		//	");\n"
-		//	"vec3 avgX = vec3(0);\n"
-		//	"vec3 avgY = vec3(0);\n",
-		//	"avgX += texture(tex, nUv).rgb * convX[convI];\n avgY += texture(tex, nUv).rgb * convY[convI];\n",
-		//	"avg = sqrt((avgX*avgX) + (avgY*avgY));",
-		//	3, 3);
 
-
-		//bwShader = Shader::FromString(vert.c_str(), sobel.c_str());
 		//std::cout << "recompiled" << std::endl;
 
 		//std::unique_ptr<RawData*> negative{ EDNegativeHA(img->data, img->GetWidth(), img->GetHeight()) };

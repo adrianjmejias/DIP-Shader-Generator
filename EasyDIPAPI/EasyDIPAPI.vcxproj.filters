@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Filters">
+      <UniqueIdentifier>{5E93FD0C-CA72-7CA8-D38A-077F3FE9E209}</UniqueIdentifier>
+    </Filter>
     <Filter Include="shaders">
       <UniqueIdentifier>{0F45D591-7B24-542D-843C-DF03F09ABA8E}</UniqueIdentifier>
     </Filter>
@@ -13,8 +16,39 @@
     <ClInclude Include="EasyDIPAPI\EDImage.h" />
     <ClInclude Include="EasyDIPAPI\EDpch.h" />
     <ClInclude Include="EasyDIPAPI\Filter.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\BlackAndWhite.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\Box.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\Embossing.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\Greyscale.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\Median.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\Negative.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\Prewitt.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\Roberts.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\Sobel.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\ToonShading.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
     <ClInclude Include="EasyDIPAPI\Kernel.h" />
     <ClInclude Include="EasyDIPAPI\Quad.h" />
+    <ClInclude Include="EasyDIPAPI\ShaderUtility.h" />
     <ClInclude Include="EasyDIPAPI\shaders\Shader.h">
       <Filter>shaders</Filter>
     </ClInclude>
@@ -27,8 +61,39 @@
     <ClCompile Include="EasyDIPAPI\EDImage.cpp" />
     <ClCompile Include="EasyDIPAPI\EDpch.cpp" />
     <ClCompile Include="EasyDIPAPI\Filter.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\BlackAndWhite.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\Box.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\Embossing.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\Greyscale.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\Median.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\Negative.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\Prewitt.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\Roberts.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\Sobel.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\ToonShading.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
     <ClCompile Include="EasyDIPAPI\Kernel.cpp" />
     <ClCompile Include="EasyDIPAPI\Quad.cpp" />
+    <ClCompile Include="EasyDIPAPI\ShaderUtility.cpp" />
     <ClCompile Include="EasyDIPAPI\shaders\Shader.cpp">
       <Filter>shaders</Filter>
     </ClCompile>

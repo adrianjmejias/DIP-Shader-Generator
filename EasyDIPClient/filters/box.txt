@@ -1,0 +1,1 @@
+filters/kernels/box.txt 0 0 0 0 3 3

@@ -8,7 +8,7 @@
 #include "main.h"
 #include <glad/glad.h>
 //#include "EDImage.hpp"
-#include "EasyDIPAPI/EDConvolution.h"
+//#include "EasyDIPAPI/EDConvolution.h"
 
 int main()
 {

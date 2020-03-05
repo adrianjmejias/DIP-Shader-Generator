@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -15,20 +15,20 @@
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>EasyDIPAPI</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -96,8 +96,19 @@
     <ClInclude Include="EasyDIPAPI\EDImage.h" />
     <ClInclude Include="EasyDIPAPI\EDpch.h" />
     <ClInclude Include="EasyDIPAPI\Filter.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\BlackAndWhite.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\Box.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\Embossing.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\Greyscale.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\Median.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\Negative.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\Prewitt.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\Roberts.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\Sobel.h" />
+    <ClInclude Include="EasyDIPAPI\Filters\ToonShading.h" />
     <ClInclude Include="EasyDIPAPI\Kernel.h" />
     <ClInclude Include="EasyDIPAPI\Quad.h" />
+    <ClInclude Include="EasyDIPAPI\ShaderUtility.h" />
     <ClInclude Include="EasyDIPAPI\shaders\Shader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -108,8 +119,19 @@
     <ClCompile Include="EasyDIPAPI\EDImage.cpp" />
     <ClCompile Include="EasyDIPAPI\EDpch.cpp" />
     <ClCompile Include="EasyDIPAPI\Filter.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\BlackAndWhite.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\Box.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\Embossing.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\Greyscale.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\Median.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\Negative.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\Prewitt.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\Roberts.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\Sobel.cpp" />
+    <ClCompile Include="EasyDIPAPI\Filters\ToonShading.cpp" />
     <ClCompile Include="EasyDIPAPI\Kernel.cpp" />
     <ClCompile Include="EasyDIPAPI\Quad.cpp" />
+    <ClCompile Include="EasyDIPAPI\ShaderUtility.cpp" />
     <ClCompile Include="EasyDIPAPI\shaders\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>

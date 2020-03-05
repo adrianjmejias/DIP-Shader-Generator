@@ -1,6 +1,5 @@
 #include "EDClientpch.h"
-
-
+#include "ImGuiFilters.h"
 #ifndef __ED_CLIENT_APPLICATION__
 #define __ED_CLIENT_APPLICATION__
 
@@ -22,7 +21,14 @@ class Application
 	bool useGPU = true;
 
 	ED::Sobel sobel;
-	
+	ED::Embossing embossing;
+	ED::ToonShading toon;
+	ED::BlackAndWhite bw;
+	ED::Box box;
+	ED::Greyscale grey;
+	ED::Median median;
+	ED::Negative negative;
+	ED::Prewitt prewitt;
 	//GlobalConvList convsGlobal;
 	int nLocalConv = 0;
 	int nGlobalConv = 0;
@@ -37,40 +43,8 @@ class Application
 	std::vector<std::vector< ED::Padding > > paddings;
 	std::vector<std::vector< ED::Pivot > > pivots;
 
+	void TranslateImage(float x, float y);
 
-	//std::vector<ED::GlobalConv> convsGlobal = {
-	//	ED::ApplyNegative,
-	//	//ED::ApplyGrey,
-	//	//ED::ApplyBW,
-	//};
-
-	//std::vector<ED::ConvMetaList> metaGlobalHA;
-	//GlobalConvList convsGlobalGPU = {
-	//	ED::ApplyNegativeHA,
-	//	//ED::ApplyGreyHA,
-	//	//ED::ApplyBWHA,
-	//};
-
-	//std::vector<ED::ConvMetaList> metaLocal;
-	//LocalConvList convsLocal = {
-	//	ED::ApplySobel,
-	//	//ED::ApplyRoberts,
-	//	//ED::ApplyPrewitt,
-
-	//	//ED::ApplyBox,
-	//	//ED::ApplyMedian,
-	//	//ED::ApplyLaplaceGauss,
-	//};
-	//std::vector<ED::ConvMetaList> metaLocalHA;
-	//LocalConvList convsLocalGPU = {
-	//	ED::ApplySobel,
-	//	//ED::ApplyRoberts,
-	//	//ED::ApplyPrewitt,
-
-	//	//ED::ApplyBoxHA,
-	//	//ED::ApplyMedian,
-	//	//ED::ApplyLaplaceGauss,
-	//};
 
 	GLFWwindow *window;
 
@@ -83,7 +57,10 @@ class Application
 	int windowHeight;
 
 	bool show_demo_window = true;
-
+	void ShowImGuiUI()
+	{
+		//if
+	}
 
 
 public:

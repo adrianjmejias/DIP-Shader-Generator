@@ -19,10 +19,17 @@
 #include <cmath>
 #include "Quad.h"
 #include "shaders/Shader.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 //Shader
 
 namespace ED {
 	
+#define PARAMS_CONV RawData* imgData, int imgWidth, int imgHeight, int nChannels
+
+
+
 	using Padding = std::tuple<int, int, int, int>;
 	using Pivot = std::tuple<int, int>;
 	using Dimensions = std::tuple<int, int>;
@@ -59,23 +66,8 @@ namespace ED {
 	*/
 	using LocalConv = std::function<RawData * (PARAMS_LOCAL)>;
 
-	float clamp(const float u, const float d, const float v);
 
-	/*!
-	@brief Takes the float values of the array and converts
-			them to 0 to 1 numbers by averaging them values in the array
-	*/
-	std::vector<float> Normalize(std::vector<float> d);
 	
-	
-	//	static bool TryLoad(const std::string& path, EDImage*& img);
-	//
-	//	static bool TrySave(const EDImage& img, const std::string& fileName);
-	//	static bool TrySave(const ED::RawData* data, const std::string fileName, int width, int height, int nChannels) {
-	//		return stbi_write_png(fileName.data(), width, height, nChannels, data, nChannels * width);
-	//	}
-
-
 	template <typename TT> void inline Assign(TT *val, int sz, const TT& eq)
 	{
 		for (int ii = 0; ii < sz; ii++)
@@ -83,7 +75,7 @@ namespace ED {
 			val[ii] = eq;
 		}
 	}
-
+	std::string UseForConv(int convWidth, int convHeight, int pivotX, int pivotY, float d, const std::string& op);
 	std::string UseForConv(int convWidth, int convHeight, const Pivot &pi, const std::string &op);
 	//std::string UseForConv(const Kernel& m, const std::string &op);
 	std::string UseForConv(int convWidth, int convHeight, int pivotX, int pivotY, const std::string &op);
