@@ -8,23 +8,32 @@ namespace ED {
 	{
 		RawData* data = new RawData[imgWidth * imgHeight];
 
-
-		for (size_t iW = 0; iW < imgWidth; iW+= 1)
+		int p = imgWidth * imgHeight;
+		for (int iW = 0; iW < imgWidth; iW+= 1)
 		{
-			size_t iH = 0;
-			for (size_t end = imgHeight * hist[iW]; iH < end; iH++)
+			int iH = 0;
+			int end = 0;
+			//for (size_t end = imgHeight * hist[iW]; iH < end; iH++)
+			//{
+			//	data[iW + iH * imgWidth] = 255;
+			//}
+			//for (; iH < imgHeight; iH++)
+			//{
+			//	data[iW + iH * imgWidth] = 0;
+			//}
+
+			iH = imgHeight -1;
+			end = imgHeight *(  hist[iW]);
+			for (; iH >= end; iH--)
 			{
-				data[iW + iH * imgWidth] = 255;
+				data[p - (imgWidth - iW + (iH * imgWidth))] = 0;
 			}
-			for (; iH < imgHeight; iH++)
+			for (; iH >= 0; iH--)
 			{
-				data[iW + iH * imgWidth] = 0;
+				data[p - (imgWidth - iW + (iH * imgWidth))] = 255;
 			}
+
 		}
-
-
-
-
 		return data;
 	}
 
