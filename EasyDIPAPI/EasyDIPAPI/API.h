@@ -10,16 +10,17 @@
  *  @author Somebody else
  *  @date   2012-02-20
  ***********************************************/
+/* Funciones del API :
 
- //	- Mostrar información sobre la imagen : cantidad única de colores and dpi
- //	(Dots Per Inch).
- //	- Obtener el número de colores únicos que componen la imagen.
- //	- Obtener el histograma de la imagen	
-/*	-Aplicar un kernel arbitrario a la imagen.Para ello debe haber una forma simple y práctica de asignar
-		los valores a cada posición del kernel.
-		- Debe agregar al menos un(1) efecto complejo opcional(e.g., Chromakey, Cuantización, Toon
-			Shading, Estereografía, Gamma Correction, High Dynamic Range HDR, entre
-			otros).
+- Mostrar información sobre la imagen :  dpi
+(Dots Per Inch).
+- Obtener el histograma de la imagen.
+- Filtro del  mediana 
+
+- Debe agregar al menos un(1) efecto complejo opcional(e.g., Chromakey, Cuantización, Toon Shading, Estereografía, Gamma Correction, High Dynamic Range HDR, entre
+	otros).
+	- Las funciones del API deben ser demostradas a través de una aplicación que incorpore escalamiento
+	y rotación libre de la imagen, así como acercamiento y alejamiento(Zoom in / Zoom out).
 */
 
 #include "Filters/Sobel.h"
@@ -31,6 +32,8 @@
 #include "Filters/Median.h"
 #include "Filters/Negative.h"
 #include "Filters/Prewitt.h"
+#include "Filters/Roberts.h"
+#include "Filters/LaplacianOfGaussian.h"
 
 namespace ED {
 
@@ -43,6 +46,5 @@ namespace ED {
 	bool Load(const std::string& path, RawData*& data, int& width, int& height, int& nChannels);
 
 	bool Save(const std::string& fileName, RawData* data, int width, int height, int nChannels);
-	
-	bool EDInit();
+
 }

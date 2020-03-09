@@ -12,5 +12,6 @@ public:
 	glm::vec1 rot{ 0 };
 
 	RawData* ApplyGPU(PARAMS_CONV) override;
+
 };
 }

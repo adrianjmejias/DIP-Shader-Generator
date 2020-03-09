@@ -30,44 +30,8 @@ namespace ED {
 
 
 
-	using Padding = std::tuple<int, int, int, int>;
-	using Pivot = std::tuple<int, int>;
-	using Dimensions = std::tuple<int, int>;
 	using RawData = unsigned char;
 
-	struct ConvMeta
-	{
-		int pivotX;
-		int pivotY;
-		int pTop, pBot, pLeft, pRight;
-		int width, height;
-	};
-
-
-
-
-
-
-	//using ConvMetaList = std::vector<Kernel>;
-
-	#define PARAMS_GLOBAL RawData* data, unsigned int width, unsigned int height, unsigned int nChannels
-
-	#define PARAMS_LOCAL RawData * data, unsigned int imgWidth, unsigned int imgHeight, int nChannels, \
-	std::vector< ConvMeta > meta
-
-
-	/*!
-		@brief We define this as a definition for global convolutions
-	*/
-	using GlobalConv = std::function<RawData * (PARAMS_GLOBAL)>;
-
-	/*!
-		@brief We define this as a definition for local convolutions
-	*/
-	using LocalConv = std::function<RawData * (PARAMS_LOCAL)>;
-
-
-	
 	template <typename TT> void inline Assign(TT *val, int sz, const TT& eq)
 	{
 		for (int ii = 0; ii < sz; ii++)
@@ -76,13 +40,9 @@ namespace ED {
 		}
 	}
 	std::string UseForConv(int convWidth, int convHeight, int pivotX, int pivotY, float d, const std::string& op);
-	std::string UseForConv(int convWidth, int convHeight, const Pivot &pi, const std::string &op);
-	//std::string UseForConv(const Kernel& m, const std::string &op);
 	std::string UseForConv(int convWidth, int convHeight, int pivotX, int pivotY, const std::string &op);
 
-	//std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, const Kernel m);
 	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(std::vector<float> fullConv, unsigned int actWidth, unsigned int actHeight, int top, int right, int bottom, int left);
-	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float> &fullConv, unsigned int actWidth, unsigned int actHeight, const Padding &p);
 
 	std::string BuildShaderConv(const std::string& uniforms, const std::string& before, const std::string& op, const std::string& after);
 
@@ -98,9 +58,8 @@ namespace ED {
 	
 	RawData* ForEachConvolution(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, int convWidth, int convHeight, int pivotX, int pivotY, std::function<void()> init, std::function<void(RawData*, int ix, int iy, int ic)> op, std::function<void(RawData*)> end);
 	RawData* ForEachPixel(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, std::function<void(RawData*, RawData*)> op);
-	unsigned int GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHeight);
+	//TexId GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHeight, int);
 
-	bool EDInit();
 }
 #endif // !__ED_PCH__
 

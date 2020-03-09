@@ -148,7 +148,7 @@ namespace ED
 
 		if (normalize)
 		{
-			NormalizeNonAlloc(reducedConv);
+				NormalizeNonAlloc(reducedConv);
 		}
 
 	}

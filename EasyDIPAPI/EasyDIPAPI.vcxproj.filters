@@ -10,10 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EasyDIPAPI\API.h" />
-    <ClInclude Include="EasyDIPAPI\API_CPU.h" />
-    <ClInclude Include="EasyDIPAPI\API_GPU.h" />
-    <ClInclude Include="EasyDIPAPI\Convolutions.h" />
-    <ClInclude Include="EasyDIPAPI\EDImage.h" />
     <ClInclude Include="EasyDIPAPI\EDpch.h" />
     <ClInclude Include="EasyDIPAPI\Filter.h" />
     <ClInclude Include="EasyDIPAPI\Filters\BlackAndWhite.h">
@@ -25,7 +21,13 @@
     <ClInclude Include="EasyDIPAPI\Filters\Embossing.h">
       <Filter>Filters</Filter>
     </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\GammaCorrection.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
     <ClInclude Include="EasyDIPAPI\Filters\Greyscale.h">
+      <Filter>Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="EasyDIPAPI\Filters\LaplacianOfGaussian.h">
       <Filter>Filters</Filter>
     </ClInclude>
     <ClInclude Include="EasyDIPAPI\Filters\Median.h">
@@ -55,10 +57,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EasyDIPAPI\API.cpp" />
-    <ClCompile Include="EasyDIPAPI\API_CPU.cpp" />
-    <ClCompile Include="EasyDIPAPI\API_GPU.cpp" />
-    <ClCompile Include="EasyDIPAPI\Convolutions.cpp" />
-    <ClCompile Include="EasyDIPAPI\EDImage.cpp" />
     <ClCompile Include="EasyDIPAPI\EDpch.cpp" />
     <ClCompile Include="EasyDIPAPI\Filter.cpp" />
     <ClCompile Include="EasyDIPAPI\Filters\BlackAndWhite.cpp">
@@ -70,7 +68,13 @@
     <ClCompile Include="EasyDIPAPI\Filters\Embossing.cpp">
       <Filter>Filters</Filter>
     </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\GammaCorrection.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
     <ClCompile Include="EasyDIPAPI\Filters\Greyscale.cpp">
+      <Filter>Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="EasyDIPAPI\Filters\LaplacianOfGaussian.cpp">
       <Filter>Filters</Filter>
     </ClCompile>
     <ClCompile Include="EasyDIPAPI\Filters\Median.cpp">

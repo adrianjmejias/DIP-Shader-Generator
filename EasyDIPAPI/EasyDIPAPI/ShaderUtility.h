@@ -3,6 +3,22 @@
 
 namespace ED
 {
+	struct TexId
+	{
+		unsigned int id = 0;
+		operator unsigned int&()
+		{
+			return id;
+		}
+
+		void Reset(unsigned int _id)
+		{
+			glDeleteTextures(1, &id);
+
+			id = _id;
+		}
+	};
+
 
 	const std::string SHADER_DEFINE_BW = "DEF_SU_BW";
 	const std::string SHADER_DEFINE_GREY = "DEF_SU_GREYSCALE";
@@ -31,7 +47,7 @@ namespace ED
 
 	std::string BuildConvolution(std::vector<float> vals, const std::string& name);
 
-	unsigned int GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHeight);
+	TexId GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHeight, int nChannels =3);
 
 	RawData* ForEachPixel(RawData* data, unsigned int width, unsigned int height, unsigned int nChannels, std::function<void(RawData*, RawData*)> op);
 

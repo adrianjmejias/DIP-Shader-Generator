@@ -1,0 +1,2 @@
+filters/kernels/robertsX.txt 0 0 0 0 3 3
+filters/kernels/robertsY.txt 0 0 0 0 3 3

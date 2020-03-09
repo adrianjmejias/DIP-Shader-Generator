@@ -3,6 +3,8 @@
 
 namespace ED
 {
+
+
 	RawData* ApplyConvolutionHA(RawData* data, unsigned int imgWidth, unsigned int imgHeight, unsigned int nChannels, Shader& s)
 	{
 		// The texture we're going to render to
@@ -27,7 +29,7 @@ namespace ED
 									   //PreApplyConvolution(tex);
 		RawData* out;
 		unsigned int texture;
-		texture = GetTexture(data, imgWidth, imgHeight);
+		texture = GetTexture(data, imgWidth, imgHeight).id;
 
 		// tratar de hacer que el user pase el out que quiera usar
 		out = new RawData[(imgWidth * imgHeight) * nChannels];
@@ -87,7 +89,7 @@ namespace ED
 
 		for (float val : d)
 		{
-			sum += val;
+			sum += std::abs(val);
 		}
 
 		for (float& val : d)
@@ -95,6 +97,7 @@ namespace ED
 			val /= sum;
 		}
 	}
+	
 	std::string OnlyOnce(const std::string& defName, const std::string& shaderFunc)
 	{
 		return
@@ -155,10 +158,7 @@ namespace ED
 		return init;
 	}
 
-	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(const std::vector<float>& fullConv, unsigned int actWidth, unsigned int actHeight, const Padding& p)
-	{
-		return ReduceConvolution(fullConv, actWidth, actHeight, std::get<0>(p), std::get<1>(p), std::get<2>(p), std::get<3>(p));
-	}
+	
 	std::tuple<std::vector<float>, unsigned int, unsigned int> ReduceConvolution(std::vector<float> fullConv, unsigned int actWidth, unsigned int actHeight, int top, int right, int bottom, int left)
 	{
 		bottom = actHeight - bottom;
@@ -332,11 +332,11 @@ namespace ED
 
 		return convolution;
 	}
-	unsigned int GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHeight)
+	TexId GetTexture(RawData* data, unsigned int imgWidth, unsigned int imgHeight, int nChannels)
 	{
-		unsigned int tex;
+		TexId tex;
 
-		glGenTextures(1, &tex);
+		glGenTextures(1, &tex.id);
 		glBindTexture(GL_TEXTURE_2D, tex);
 		// set the texture wrapping parameters
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
@@ -344,8 +344,27 @@ namespace ED
 		// set texture filtering parameters
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		unsigned int type;
 
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imgWidth, imgHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		switch (nChannels)
+		{
+		case 1:
+			type = GL_RED;
+			break;
+		case 2:
+			type = GL_RG;
+			break;
+		case 3:
+			type = GL_RGB;
+			break;
+		default:
+			__debugbreak();
+			throw "not supported";
+			break;
+		}
+
+
+		glTexImage2D(GL_TEXTURE_2D, 0, type, imgWidth, imgHeight, 0, type, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		return tex;

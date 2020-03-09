@@ -3,9 +3,6 @@
 #ifndef __ED_CLIENT_APPLICATION__
 #define __ED_CLIENT_APPLICATION__
 
-using LocalConvList = std::vector<ED::LocalConv>;
-using GlobalConvList = std::vector<ED::GlobalConv>;
-
 
 
 
@@ -19,6 +16,7 @@ class Application
 	int imgHeight;
 	int nChannels;
 	bool useGPU = true;
+	std::vector<float> rhist, ghist, bhist;
 
 	ED::Sobel sobel;
 	ED::Embossing embossing;
@@ -29,6 +27,11 @@ class Application
 	ED::Median median;
 	ED::Negative negative;
 	ED::Prewitt prewitt;
+	ED::Roberts roberts;
+	ED::LaplacianOfGaussian log;
+	std::unique_ptr<ED::RawData> img;
+
+
 	//GlobalConvList convsGlobal;
 	int nLocalConv = 0;
 	int nGlobalConv = 0;
@@ -40,9 +43,6 @@ class Application
 
 	glm::mat4 model;
 
-	std::vector<std::vector< ED::Padding > > paddings;
-	std::vector<std::vector< ED::Pivot > > pivots;
-
 	void TranslateImage(float x, float y);
 
 
@@ -50,18 +50,15 @@ class Application
 
 	//EDImage *img;
 	std::unique_ptr<Shader> basicShader;
-	unsigned int texId = 0;
+	ED::TexId texId;
 	unsigned int texOGImg = 0;
 
 	int windowWidth;
 	int windowHeight;
 
 	bool show_demo_window = true;
-	void ShowImGuiUI()
-	{
-		//if
-	}
 
+	unsigned int nUniqueColors;
 
 public:
 	Application();

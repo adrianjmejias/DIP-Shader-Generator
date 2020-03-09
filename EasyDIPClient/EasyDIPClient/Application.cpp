@@ -98,9 +98,6 @@ Application::Application() {
 
 	basicShader.reset(Shader::FromString(vert.c_str(), frag.c_str()));
 
-
-	ED::EDInit();
-
 	if (ED::Load("../valve.png", imgData, imgWidth, imgHeight, nChannels))
 	{
 		std::cout << "img loaded successfully\n";
@@ -111,6 +108,8 @@ Application::Application() {
 		return;
 	}
 
+	//ED::Save("../savevalve.png", imgData, imgWidth, imgHeight, nChannels);
+
 	unsigned int byteSize = imgWidth * imgHeight * nChannels;
 
 
@@ -118,14 +117,18 @@ Application::Application() {
 	box.LoadFromFile("filters/box.txt");
 	median.LoadFromFile("filters/median.txt");
 	prewitt.LoadFromFile("filters/prewitt.txt");
-	//ED::GetHistogram(imgData, byteSize, nChannels, 0);
-	//ED::GetHistogram(imgData, byteSize, nChannels, 1);
-	//ED::GetHistogram(imgData, byteSize, nChannels, 2);
+	roberts.LoadFromFile("filters/roberts.txt");
+	log.LoadFromFile("filters/laplacianofgaussian.txt");
 
-	//ED::NumberOfUniqueColors(imgData, byteSize, nChannels);
+	rhist = std::move(ED::GetHistogram(imgData, byteSize, nChannels, 0));
+	ghist = std::move(ED::GetHistogram(imgData, byteSize, nChannels, 1));
+	bhist = std::move(ED::GetHistogram(imgData, byteSize, nChannels, 2));
 
 
 
+
+
+	nUniqueColors = ED::NumberOfUniqueColors(imgData, byteSize, nChannels);
 }
 
 Application::~Application() {
@@ -196,8 +199,14 @@ void Application::ImGui()
 	auto io= ImGui::GetIO();
 
 
-	ImGui::Text("fps %f", io.Framerate);
+	if (ImGui::Button("hist"))
+	{
+		img.reset(ED::HistogramToTexture(rhist, 256, 256));
+		texId.Reset(ED::GetTexture(img.get(), 256,256, 1));
+		ED::Save("../hist.png", img.get(), 255, 255, 1);
+	}
 
+	ImGui::Text("Colores unicos %d", nUniqueColors);
 
 	if (ImGui::SliderFloat2("scale", &scale.x, -2, 2)) {
 		dirty = true;
@@ -272,7 +281,7 @@ void Application::ImGui()
 
 	if (ImGuiSobel(sobel))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 		img.reset(sobel.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
 
@@ -281,7 +290,7 @@ void Application::ImGui()
 
 	if (ImGui::Button("Apply sobel"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 		if (useGPU)
 		{
@@ -299,7 +308,7 @@ void Application::ImGui()
 
 	if (ImGui::SliderFloat("embossing rot", &embossing.rot[0], -3.14, 3.14))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(embossing.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
@@ -309,7 +318,7 @@ void Application::ImGui()
 	}
 	if (ImGui::SliderFloat("embossing distance", &embossing.distance, -10, 10))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(embossing.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
@@ -319,7 +328,7 @@ void Application::ImGui()
 	}
 	if (ImGui::Button("apply embossing"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(embossing.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
@@ -330,7 +339,7 @@ void Application::ImGui()
 
 	if (ImGui::Button("apply toon"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(toon.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
@@ -341,7 +350,7 @@ void Application::ImGui()
 
 	if (ImGui::SliderFloat("bw threshold", &bw.threshold, 0, 255))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(bw.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
@@ -352,7 +361,7 @@ void Application::ImGui()
 
 	if (ImGui::Button("apply bw cpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(bw.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
@@ -362,7 +371,7 @@ void Application::ImGui()
 	}
 	if (ImGui::Button("apply box cpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(box.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
@@ -372,7 +381,7 @@ void Application::ImGui()
 	}
 	if (ImGui::Button("apply box gpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 		img.reset(box.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
 
@@ -381,7 +390,7 @@ void Application::ImGui()
 
 	if (ImGui::Button("apply grey cpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(grey.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
@@ -391,7 +400,7 @@ void Application::ImGui()
 	}
 	if (ImGui::Button("apply grey gpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 		img.reset(grey.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
 
@@ -400,7 +409,7 @@ void Application::ImGui()
 
 	if (ImGui::Button("apply median cpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(median.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
@@ -410,7 +419,7 @@ void Application::ImGui()
 	}
 	if (ImGui::Button("apply median gpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 		img.reset(median.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
 
@@ -419,7 +428,7 @@ void Application::ImGui()
 
 	if (ImGui::Button("apply negative cpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(negative.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
@@ -429,7 +438,7 @@ void Application::ImGui()
 	}
 	if (ImGui::Button("apply negative gpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 		img.reset(negative.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
 
@@ -437,7 +446,7 @@ void Application::ImGui()
 	}
 	if (ImGui::Button("apply prewitt cpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 
 		img.reset(prewitt.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
@@ -447,9 +456,40 @@ void Application::ImGui()
 	}
 	if (ImGui::Button("apply prewitt gpu"))
 	{
-		std::unique_ptr<ED::RawData> img;
+		
 
 		img.reset(prewitt.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+
+	if (ImGui::Button("apply roberts cpu"))
+	{
+		
+
+
+		img.reset(roberts.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::Button("apply roberts gpu"))
+	{
+		img.reset(roberts.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+
+	if (ImGui::Button("apply log cpu"))
+	{
+		img.reset(log.ApplyCPU(imgData, imgWidth, imgHeight, nChannels));
+
+
+		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
+	}
+	if (ImGui::Button("apply log gpu"))
+	{
+		img.reset(log.ApplyGPU(imgData, imgWidth, imgHeight, nChannels));
 
 		texId = ED::GetTexture(img.get(), imgWidth, imgHeight);
 	}
