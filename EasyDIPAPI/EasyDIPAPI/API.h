@@ -14,7 +14,6 @@
 
 - Mostrar información sobre la imagen :  dpi
 (Dots Per Inch).
-- Obtener el histograma de la imagen.
 - Filtro del  mediana 
 
 - Debe agregar al menos un(1) efecto complejo opcional(e.g., Chromakey, Cuantización, Toon Shading, Estereografía, Gamma Correction, High Dynamic Range HDR, entre

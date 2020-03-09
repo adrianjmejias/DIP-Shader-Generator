@@ -187,11 +187,6 @@ namespace ED
 		return { reducedConv, newWidth, newHeight };
 	}
 
-	//std::string UseForConv(int convWidth, int convHeight, const Pivot& pi, const std::string& op) {
-
-	//	return UseForConv(convWidth, convHeight, std::get<0>(pi), std::get<1>(pi), op);
-	//}
-
 
 	std::string UseForConv(int convWidth, int convHeight, int pivotX, int pivotY, float d, const std::string& op) {
 
@@ -386,6 +381,8 @@ namespace ED
 	{
 		unsigned int byteWidth = width * nChannels;
 		int imHeight = height;
+
+		unsigned int fullSize = byteWidth * imHeight;
 		RawData* out = new RawData[height * byteWidth];
 
 		int pXFinal = -pivotX * nChannels;
@@ -405,7 +402,14 @@ namespace ED
 							int fx = static_cast<int>(xx) + cxc + pXFinal;
 							if (fx < 0) continue;
 							int fy = ccy + cy;
-							op(&data[fx + fy * byteWidth], fx, fy, cdx + cx);
+
+					
+							unsigned int fidx = fx + fy * byteWidth;
+	
+
+								
+							op(&data[fidx], fx, fy, cdx + cx);
+							
 						}
 					}
 				}
